@@ -1,0 +1,11 @@
+object Consumer Producer
+note left of Consumer: new IoT\ndata item\nproduced
+note left of Consumer: "phone home"\nby notifying\nproducer
+Consumer->Producer: I1
+note right of Producer: generate Interest\nfor IoT data
+Producer->Consumer: RI1
+note left of Consumer: send requested\ndata object
+Consumer->Producer: RD1
+note right of Producer: finalize interaction\nwith optional\nData message
+Producer->Consumer: D1 (optional)
+

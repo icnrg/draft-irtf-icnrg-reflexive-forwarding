@@ -1,0 +1,21 @@
+object Consumer Forwarder Producer
+Consumer->Forwarder: I1
+note left of Forwarder: Record RNP\n in PIT(I1)
+note right of Forwarder: Add FPT to I1.FPT
+Forwarder->Producer: I1
+note right of Producer: Check\nprefix,\ncreating\nReflexive\nInterest\nstate
+note left of Producer: I1.FPT->RI1.RPT
+Producer->Forwarder: RI1
+note right of Forwarder: use RI1.RPT to find\nPIT(I1),\ncheck match\n of PIT(I1).RNP\ncreate PIT(RI1),\nforward RI1
+note left of Forwarder: add I1.RPT and I2.FPT\nto PIT(I2)
+Forwarder->Consumer: RI1
+Consumer->Forwarder: RD1 obj
+note left of Forwarder: consume PIT(I2) entry\nand forward RD1
+note left of Forwarder: RI1.FPT->RD1.RPT
+note right of Forwarder: satisfy PIT(RI1)
+Forwarder->Producer: RD1
+note right of Producer: all\n parameters\nreceived,\nanswer I1
+Producer->Forwarder: D1 object
+note left of Forwarder: satisfy PIT(I1),\nforward D1
+note left of Forwarder: I1.FPT->D1.RPT
+Forwarder->Consumer: D1

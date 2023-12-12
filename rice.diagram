@@ -1,0 +1,17 @@
+object Consumer Forwarder Producer
+Consumer->Forwarder: I1
+Forwarder->Producer: I1
+note right of Producer: Start requesting\nparams
+Producer->Forwarder: RI
+Forwarder->Consumer: RI
+Consumer->Forwarder: D2
+Forwarder->Producer: D2
+note right of Producer: Commit compute\nresources,\nreturn Thunk name
+Producer->Forwarder: D1
+Forwarder->Consumer: D1
+note right of Consumer: After some time\nrequest result
+Consumer->Forwarder: I3
+Forwarder->Producer: I3
+Producer->Forwarder: D3
+Forwarder->Consumer: D3
+

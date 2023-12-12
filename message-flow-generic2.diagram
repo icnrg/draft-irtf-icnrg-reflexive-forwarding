@@ -1,0 +1,15 @@
+object Consumer Forwarder Producer
+Consumer->Forwarder: I1
+note left of Forwarder: Install RNP\nin FIB
+Forwarder->Producer: I1
+note right of Producer: Create\nRI state
+Producer->Forwarder: RI
+note right of Forwarder: lookup RNP in FIB
+Forwarder->Consumer: RI
+Consumer->Forwarder: D2
+Forwarder->Producer: D2
+note right of Producer: answer I1
+Producer->Forwarder: D1
+note right of Forwarder: remove RNP FIB entry
+Forwarder->Consumer: D1
+

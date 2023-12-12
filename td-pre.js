@@ -1,0 +1,2 @@
+var ie = false;
+

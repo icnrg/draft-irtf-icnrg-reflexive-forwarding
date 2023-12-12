@@ -1,0 +1,12 @@
+object Consumer Producer
+Consumer->Producer: I1
+note right of Producer: Requesting request\nparameters\nand credentials
+Producer->Consumer: RI1
+Consumer->Producer: RD1
+note right of Producer: Commit compute\nresources,\nreturn Thunk name
+Producer->Consumer: D1
+note right of Producer: Invoke Remote\nMethod
+note right of Consumer: After some time,\nrequest result
+Consumer->Producer: I2
+Producer->Consumer: D2
+

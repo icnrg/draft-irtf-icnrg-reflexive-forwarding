@@ -1,0 +1,17 @@
+object Consumer Forwarder Producer
+
+note right of Consumer: Create I1 with additional,\nemptyPath Label\ndata structure\nfor reverse discovery
+Consumer->Forwarder: I1 with Path Label\nand RNP TLV
+note right of Forwarder: Add path label\nfor adjacency\nto Consumer
+Forwarder->Producer: I1
+note left of Producer: Create RI state
+Producer->Forwarder: RI with RNP\nand path label\n(strict mode)
+note left of Forwarder: perform path label\nswitching (no FIB info)
+Forwarder->Consumer: RI with RNP
+Consumer->Forwarder: D2 (RNP)
+note right of Forwarder: regular PIT-based\nforwarding
+Forwarder->Producer: D2 (RNP)
+note left of Producer: all parameters\nreceived,\nanswer orig.\nI1 Interest
+Producer->Forwarder: D1
+note left of Forwarder: regular PIT-based\nforwarding
+Forwarder->Consumer: D1
