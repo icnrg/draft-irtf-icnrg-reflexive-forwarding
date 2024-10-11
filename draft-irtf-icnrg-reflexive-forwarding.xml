@@ -485,7 +485,7 @@
 	<section anchor="NDN_spec"><name>NDN Specific Design</name>
 	 
 	<t>
-	The following describes the operation of a CCNx or NDN forwarder enhanced to accommodate reflexive forwarding via Trigger Interests, Reflexive Interests, and Reflexive Data messages. This description likely adequate for most implementation approaches. However, there are possible performance bottlenecks for reflexive forwarding that employ highly parallel forwarding schemes using multi-core server systems. Such systems may use <em>PIT Sharding</em> across cores, and therefore benefit from additional optional protocol enhancements, such as the "PIT Token" protocol elements pioneered in <xref target="Shi2020"/>.
+	The following describes the operation of a CCNx or NDN forwarder enhanced to accommodate reflexive forwarding via Trigger Interests, Reflexive Interests, and Reflexive Data messages. This description likely adequate for most implementation approaches. However, there are possible performance bottlenecks for reflexive forwarding that employ highly parallel forwarding schemes using multi-core server systems. Such systems may use <em>PIT Sharding</em> across cores, and therefore benefit from additional optional protocol enhancements, such as the "PIT Token" protocol elements pioneered in <xref target="Shi2020"/>.</t>
 		
 	<t>The overall interaction flow for reflexive forwarding in NDN is illustrated below in <xref
 	  target="overall-message-flow"/>.</t>
@@ -523,7 +523,7 @@
 	
       <figure>
         <artwork align="left"><![CDATA[
-ccnx:/RNP1/Chunk=0  --
+ccnx:/RNP1/Chunk=0  ...
 ccnx:/RNP1/Chunk=1  EndChunkNumber=2
 ccnx:/RNP1/Chunk=2  EndChunkNumber=2
 ]]></artwork>
@@ -531,8 +531,7 @@ ccnx:/RNP1/Chunk=2  EndChunkNumber=2
 	
 	<t>RI-PIT includes a chunk number to the RNP, while RI-PIT(dummy) does not. Like an ordinary PIT entry, RI-PIT is erased whenever the corresponding RD is forwarded through the downstream face, while RI-PIT(dummy) is erased when the RI-PIT(dummy) lifetime expires or Trigger Data (TD) is received at the forwarder.
 	</t>
-
-<!--	<t><strong>[HA]</strong> We need to consider multiple RIs are forwarded via RI-PIT, because the pushed data may consist of multiple chunks. Note that it is not the case I mentioned in <xref target="naming" />. Multiple RI packets (whose RNP are same but the segment (chunk) numbers are different) can be forwarded based on RI-PIT. Therefore, RI-PIT is not immediately erased when a single RD is returned.</t>-->
+	<t><strong>[HA]</strong> We need to consider multiple RIs are forwarded via RI-PIT, because the pushed data may consist of multiple chunks. Note that it is not the case I mentioned in <xref target="naming" />. Multiple RI packets (whose RNP are same but the segment (chunk) numbers are different) can be forwarded based on RI-PIT. Therefore, RI-PIT is not immediately erased when a single RD is returned.</t> -->
 	 
 	<t>The overall interaction flow for reflexive forwarding in CCNx is illustrated below in <xref target="overall-message-flow-ccnx"/>.</t>
 	  	
@@ -662,14 +661,14 @@ ccnx:/RNP1/Chunk=2  EndChunkNumber=2
 	intermediate forwarders.
 	</t>
 
-<!--		<section anchor="signed_RNP"><name>Signed RNP</name>
+	<section anchor="signed_RNP"><name>Signed RNP</name>
 		<t>Signed RNP validates that it is the name signed by the consumer's secret key. It does not only guarantee the uniqueness of RNP, but also provides the secure schema as it can be validated whether the RNP is securely created by the legitimate consumer. More detail explanation will be TODO.</t>
 
 		<t></t>
 
 	    <figure>
         <artwork align="left"><![CDATA[
-ccnx:/RNP1/Chunk=0 --
+ccnx:/RNP1/Chunk=0 ...
 ccnx:/RNP1/Chunk=1 EndChunkNumber=2
 ccnx:/RNP1/Chunk=2 EndChunkNumber=2
 ]]></artwork>
@@ -677,14 +676,14 @@ ccnx:/RNP1/Chunk=2 EndChunkNumber=2
  	    
  	   	<figure>
         <artwork align="left"><![CDATA[
-ccnx:/RNP1/Alice/video.mp4/Chunk=0 --
+ccnx:/RNP1/Alice/video.mp4/Chunk=0 ...
 ccnx:/RNP1/Alice/video.mp4/Chunk=1 EndChunkNumber=2
 ccnx:/RNP1/Alice/video.mp4/Chunk=2 EndChunkNumber=2
 ]]></artwork>
  	    </figure>
 		
 		<t><strong>[HA]</strong>I will complete this section later.</t>
-		</section> -->
+		</section>
 
 	</section>
 
@@ -1101,7 +1100,7 @@ ELSE
     	high-speed forwarders however; these are discussed in the
     	following paragraphs.</t>
  	
-      	<t>In order to achieve forwarding scalability, high speed
+      	<t anchor="PIT-sharding">In order to achieve forwarding scalability, high speed
       	forwarders need to exploit available parallelism in both CPU
       	(through multiple cores) and memory (through multiport DRAM
       	and limiting accesses to both DRAM and L3 caches). One
@@ -1586,7 +1585,7 @@ ELSE
 	<!--		<xi:include "reference.I-D.irtf.icnrg.mapme.xml"?> -->
 	<xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.irtf-icnrg-flic.xml"/>
 	<xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.irtf-icnrg-pathsteering.xml"/>
-	<xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.mosko-icnrg-ccnxchunking.xml"/>
+	<!-- ><xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.mosko-icnrg-ccnxchunking.xml"/> -->
 	
 	<reference anchor="Krol2018" target="https://conferences.sigcomm.org/acm-icn/2018/proceedings/icn18-final9.pdf">
 	  <front>
