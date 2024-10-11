@@ -76,36 +76,36 @@ Table of Contents
      1.2.  Problems with utilizing independent exchanges . . . . . .   6
    2.  Terminology . . . . . . . . . . . . . . . . . . . . . . . . .   7
      2.1.  Definitions . . . . . . . . . . . . . . . . . . . . . . .   7
-   3.  Overview of the Reflexive Forwarding design . . . . . . . . .   8
+   3.  Overview of the Reflexive Forwarding design . . . . . . . . .   7
    4.  Detailed Specification of Reflexive Forwarding  . . . . . . .  10
-     4.1.  NDN Specific Design . . . . . . . . . . . . . . . . . . .  10
+     4.1.  Generic Forwarder Design  . . . . . . . . . . . . . . . .  10
      4.2.  CCNx Specific Design  . . . . . . . . . . . . . . . . . .  12
-     4.3.  Consumer Operation  . . . . . . . . . . . . . . . . . . .  14
-     4.4.  Naming of Reflexive Interests . . . . . . . . . . . . . .  14
-       4.4.1.  Signed RNP  . . . . . . . . . . . . . . . . . . . . .  16
-     4.5.  Producer Operation  . . . . . . . . . . . . . . . . . . .  17
-     4.6.  Forwarder Operation . . . . . . . . . . . . . . . . . . .  17
-       4.6.1.  Forwarder algorithms in pseudocode  . . . . . . . . .  18
+     4.3.  Consumer Operation  . . . . . . . . . . . . . . . . . . .  15
+     4.4.  Naming of Reflexive Interests . . . . . . . . . . . . . .  15
+       4.4.1.  Signed RNP  . . . . . . . . . . . . . . . . . . . . .  17
+     4.5.  Producer Operation  . . . . . . . . . . . . . . . . . . .  18
+     4.6.  Forwarder Operation . . . . . . . . . . . . . . . . . . .  18
+       4.6.1.  Forwarder algorithms in pseudocode  . . . . . . . . .  19
          4.6.1.1.  Processing of a Trigger Interest containing a
-                 Reflexive Name Prefix TLV . . . . . . . . . . . . .  18
-         4.6.1.2.  Processing of a Reflexive Interest  . . . . . . .  18
-     4.7.  State coupling between producer and consumer  . . . . . .  19
-   5.  Use cases for Reflexive Interests . . . . . . . . . . . . . .  19
+                 Reflexive Name Prefix TLV . . . . . . . . . . . . .  19
+         4.6.1.2.  Processing of a Reflexive Interest  . . . . . . .  19
+     4.7.  State coupling between producer and consumer  . . . . . .  20
+   5.  Use cases for Reflexive Interests . . . . . . . . . . . . . .  20
      5.1.  Achieving Remote Method Invocation with Reflexive
-           Interests . . . . . . . . . . . . . . . . . . . . . . . .  19
-     5.2.  RESTful Web Interactions  . . . . . . . . . . . . . . . .  21
+           Interests . . . . . . . . . . . . . . . . . . . . . . . .  20
+     5.2.  RESTful Web Interactions  . . . . . . . . . . . . . . . .  23
      5.3.  Achieving simple data pull from consumers with reflexive
-           Interests . . . . . . . . . . . . . . . . . . . . . . . .  22
-   6.  Implementation Considerations . . . . . . . . . . . . . . . .  25
-     6.1.  Forwarder implementation considerations . . . . . . . . .  25
+           Interests . . . . . . . . . . . . . . . . . . . . . . . .  23
+   6.  Implementation Considerations . . . . . . . . . . . . . . . .  27
+     6.1.  Forwarder implementation considerations . . . . . . . . .  27
        6.1.1.  Interactions with Input Processing of Interest and Data
-               packets . . . . . . . . . . . . . . . . . . . . . . .  25
-       6.1.2.  Interactions with Interest Lifetime . . . . . . . . .  26
+               packets . . . . . . . . . . . . . . . . . . . . . . .  27
+       6.1.2.  Interactions with Interest Lifetime . . . . . . . . .  28
        6.1.3.  Interactions with Interest aggregation and multi-path/
-               multi-destination forwarding  . . . . . . . . . . . .  27
-     6.2.  Consumer Implementation Considerations  . . . . . . . . .  28
+               multi-destination forwarding  . . . . . . . . . . . .  29
+     6.2.  Consumer Implementation Considerations  . . . . . . . . .  30
        6.2.1.  Data objects returned by the consumer to reflexive name
-               Interests arriving from a producer  . . . . . . . . .  28
+               Interests arriving from a producer  . . . . . . . . .  30
 
 
 
@@ -114,35 +114,34 @@ Oran, et al.              Expires 14 April 2025                 [Page 2]
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
-       6.2.2.  Terminating unwanted reflexive Interest exchanges . .  29
-       6.2.3.  Interactions with caching . . . . . . . . . . . . . .  29
-     6.3.  Producer Implementation Considerations  . . . . . . . . .  29
-   7.  Operational Considerations  . . . . . . . . . . . . . . . . .  29
-   8.  Mapping to CCNx and NDN packet encodings  . . . . . . . . . .  30
-     8.1.  Packet encoding for CCNx  . . . . . . . . . . . . . . . .  31
-     8.2.  Packet encoding for NDN . . . . . . . . . . . . . . . . .  31
-       8.2.1.  Reflexive Name Component Type . . . . . . . . . . . .  31
-       8.2.2.  Reflexive Name Prefix TLV . . . . . . . . . . . . . .  32
-   9.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  32
-     9.1.  CCNx Name Segment Type Registry . . . . . . . . . . . . .  32
-   10. Security Considerations . . . . . . . . . . . . . . . . . . .  32
-     10.1.  Collisions of reflexive Interest names . . . . . . . . .  33
-     10.2.  Additional resource pressure on PIT and FIB  . . . . . .  33
-     10.3.  Potential Vulnerabilities from the use of PIT Tokens . .  34
-     10.4.  Privacy Considerations . . . . . . . . . . . . . . . . .  34
-   11. Normative References  . . . . . . . . . . . . . . . . . . . .  34
-   12. Informative References  . . . . . . . . . . . . . . . . . . .  35
-   Appendix A.  Alternative Designs Considered . . . . . . . . . . .  39
-     A.1.  Handling reflexive interests using dynamic FIB entries  .  39
+       6.2.2.  Terminating unwanted reflexive Interest exchanges . .  31
+       6.2.3.  Interactions with caching . . . . . . . . . . . . . .  31
+     6.3.  Producer Implementation Considerations  . . . . . . . . .  31
+   7.  Operational Considerations  . . . . . . . . . . . . . . . . .  31
+   8.  Mapping to CCNx and NDN packet encodings  . . . . . . . . . .  33
+     8.1.  Packet encoding for CCNx  . . . . . . . . . . . . . . . .  33
+     8.2.  Packet encoding for NDN . . . . . . . . . . . . . . . . .  33
+       8.2.1.  Reflexive Name Component Type . . . . . . . . . . . .  33
+       8.2.2.  Reflexive Name Prefix TLV . . . . . . . . . . . . . .  34
+   9.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  34
+     9.1.  CCNx Name Segment Type Registry . . . . . . . . . . . . .  34
+   10. Security Considerations . . . . . . . . . . . . . . . . . . .  34
+     10.1.  Collisions of reflexive Interest names . . . . . . . . .  35
+     10.2.  Additional resource pressure on PIT and FIB  . . . . . .  35
+     10.3.  Privacy Considerations . . . . . . . . . . . . . . . . .  36
+   11. Normative References  . . . . . . . . . . . . . . . . . . . .  36
+   12. Informative References  . . . . . . . . . . . . . . . . . . .  37
+   Appendix A.  Alternative Designs Considered . . . . . . . . . . .  41
+     A.1.  Handling reflexive interests using dynamic FIB entries  .  41
        A.1.1.  Design complexities and performance issues with
-               FIB-based design  . . . . . . . . . . . . . . . . . .  40
+               FIB-based design  . . . . . . . . . . . . . . . . . .  42
        A.1.2.  Interactions between FIB-based design and Interest
-               Lifetime  . . . . . . . . . . . . . . . . . . . . . .  41
-     A.2.  Reflexive forwarding using Path Steering  . . . . . . . .  42
-   Appendix B.  NDN Implementation . . . . . . . . . . . . . . . . .  44
-     B.1.  Reflexive Name Segment  . . . . . . . . . . . . . . . . .  44
-     B.2.  Processing Reflexive Interests> . . . . . . . . . . . . .  44
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  44
+               Lifetime  . . . . . . . . . . . . . . . . . . . . . .  43
+     A.2.  Reflexive forwarding using Path Steering  . . . . . . . .  44
+   Appendix B.  NDN Implementation . . . . . . . . . . . . . . . . .  46
+     B.1.  Reflexive Name Segment  . . . . . . . . . . . . . . . . .  46
+     B.2.  Processing Reflexive Interests> . . . . . . . . . . . . .  46
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  46
 
 1.  Introduction
 
@@ -160,6 +159,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
    object), and responses are relatively large - up to an architecture-
    defined maximum transmission unit (MTU) on the order of kilobytes or
    tens of kilobytes.
+
 
 
 
@@ -358,7 +358,8 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
       original interest.
 
    *Trigger Interest* (TI)  An interest message sent from a consumer to
-      a producer to trigger Reflexive Interest sent by the producer.
+      a producer to trigger one or more Reflexive Interests sent by the
+      producer.
 
    *Reflexive Name Segment*  A high-order typed name segment which
       identifies an Interest as being a Reflexive Interest instead of a
@@ -369,30 +370,6 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
       issuing one or more corresponding Reflexive Interests.  It
       consists of a Name prefix whose high-order is a Reflexive Name
       Segment as defined above.
-
-   *PIT Token*  A hop-by-hop option in either an Interest or data
-      message allowing a forwarder to locate the PIT entry of the
-      corresponding Interest/Data exchange without the overhead of a
-      full exact name lookup.  Used in NDN.
-
-   *Forward PIT Token* (FPT)  A PIT Token added when forwarding an
-      Interest to refer to the PIT entry the forwarder has made for that
-      Interest/Data exchange.  Used in NDN.
-
-   *Reverse PIT Token* (RPT)  A PIT token (copied from the corresponding
-      forward PIT token) added to either a Data message or a Reflexive
-      Interest to allow a forwarder to locate the PIT entry of the
-      corresponding interest/Data exchange without the overhead of a
-      full exact name lookup.  Used in NDN.
-
-
-
-
-
-Oran, et al.              Expires 14 April 2025                 [Page 7]
-
-Internet-Draft          ICN Reflexive Forwarding            October 2024
-
 
 3.  Overview of the Reflexive Forwarding design
 
@@ -409,6 +386,14 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
    recording the incoming interface on which the Interest was received
    on.  If the Interest is not immediately satisfied by cached data in
    the CS, the forwarder looks up the name in the FIB to ascertain the
+
+
+
+Oran, et al.              Expires 14 April 2025                 [Page 7]
+
+Internet-Draft          ICN Reflexive Forwarding            October 2024
+
+
    _next-hop_ to propagate the Interest onward upstream toward the named
    producer.  Therefore, a chain of forwarding state is established
    during Interest forwarding that couples the PIT entries of the chain
@@ -440,6 +425,21 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
     |                             Drop Data                           |
     |                                                                 |
     +-----------------------------------------------------------------+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -541,7 +541,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
    The following sections provide the normative details on each of these
    design elements.
 
-4.1.  NDN Specific Design
+4.1.  Generic Forwarder Design
 
    The following describes the operation of a CCNx or NDN forwarder
    enhanced to accommodate reflexive forwarding via Trigger Interests,
@@ -552,8 +552,8 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
    systems.  Such systems may use _PIT Sharding_ across cores, and
    therefore benefit from additional optional protocol enhancements,
    such as the "PIT Token" protocol elements pioneered in [Shi2020].
-
-
+   Alternatively, techniques such as those employed by the Cefore
+   [Asaeda2019] forwarder from NICT may be employed.
 
 
 
@@ -562,8 +562,8 @@ Oran, et al.              Expires 14 April 2025                [Page 10]
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
-   The overall interaction flow for reflexive forwarding in NDN is
-   illustrated below in Figure 2.
+   The overall interaction flow for reflexive forwarding is illustrated
+   below in Figure 2.
 
 +-----------+              +-----------+                 +-----------+
 | Consumer  |              | Forwarder |                 | Producer  |
@@ -645,27 +645,27 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
     RD1: Data message, answering RI1
     TD1: Data message, answering TI1
 
-              Figure 2: Overview of Message Flow in NDN
+                  Figure 2: Overview of Message Flow
 
    The following sub-sections further describe reflexive forwarding
    operation for CCNx and NDN respectively.
 
 4.2.  CCNx Specific Design
 
-   The overall interaction flow for reflexive forwarding in CCNx is
-   illustrated below in Figure 3.
+   The overall interaction flow for reflexive forwarding in CCNx, using
+   the implementations approach in CeFore [Asaeda2019], is described
+   below and illustrated in Figure 4.
 
-+-----------+                       +-----------+                           +-----------+
-| Consumer  |                       | Forwarder |                           | Producer  |
-+-----------+                       +-----------+                           +-----------+
-      |                                   |                                       |
-      | TI1                               |                                       |
-      |---------------------------------->|                                       |
-      |---------------------------------\ |                                       |
-      || Record fullname in TI-PIT(TI1) |-|                                       |
-      ||--------------------------------| |                                       |
-      |                                   |                                       |
-      |                                   | I1                                    |
+   Forwarder operation for CCNx is slightly changed in the following
+   respects when supporting Reflexive Interests.  When a forwarder
+   receives TI that will be sent toward the producer, the forwarder
+   creates two PIT entries; (1) a regular PIT entry for TI (TI-PIT,
+   hereafter) that consists of the name of the Name TLV in TI,
+   downstream face (i.e., face from which the TI is received), and
+   upstream face(s) (i.e., face(s) from which the TI is/are forwarded),
+   and (2) a tentative PIT entry for RI (RI-PIT(dummy), hereafter) that
+   includes Reflexive Name Prefix (RNP), downstream face (i.e., face(s)
+   from which the TI is/are forwarded), and upstream face (i.e., face
 
 
 
@@ -674,54 +674,54 @@ Oran, et al.              Expires 14 April 2025                [Page 12]
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
-      |                                   |-------------------------------------->|
-      |                                   | --------------------------------\     |
-      |                                   |-| Add RNP to RI-PIT(dummy)(RI1) |     |
-      |                                   | |-------------------------------|     |
-      |                                   |                                       | ------------\
-      |                                   |                                       |-| Check     |
-      |                                   |                                       | | prefix,   |
-      |                                   |                                       | | creating  |
-      |                                   |                                       | | Reflexive |
-      |                                   |                                       | | Interest  |
-      |                                   |                                       | | state     |
-      |                                   |                                       | |-----------|
-      |                                   |                                       |
-      |                                   |                                   RI1 |
-      |                                   |<--------------------------------------|
-      |                                   | ----------------------\               |
-      |                                   |-| check match         |               |
-      |                                   | | of RI-PIT(dummy)    |               |
-      |                                   | | create RI-PIT(RI1), |               |
-      |                                   | | forward RI1         |               |
-      |                                   | |---------------------|               |
-      |                                   |                                       |
-      |                               RI1 |                                       |
-      |<----------------------------------|                                       |
-      |                                   |                                       |
-      | RD1 obj                           |                                       |
-      |---------------------------------->|                                       |
-      |         ------------------------\ |                                       |
-      |         | consume PIT(I2) entry |-|                                       |
-      |         | and forward RD1       | |                                       |
-      |         |-----------------------| |                                       |
-      |                                   | ----------------------\               |
-      |                                   |-| satisfy RI-PIT(RI1) |               |
-      |                                   | |---------------------|               |
-      |                                   |                                       |
-      |                                   | RD1                                   |
-      |                                   |-------------------------------------->|
-      |                                   |                                       | -----------------------\
-      |                                   |                                       |-| all                  |
-      |                                   |                                       | | parameters\received, |
-      |                                   |                                       | | answer TI1           |
-      |                                   |                                       | |----------------------|
-      |                                   |                                       |
-      |                                   |                             D1 object |
-      |                                   |<--------------------------------------|
-      |              -------------------\ |                                       |
-      |              | satisfy PIT(I1), |-|                                       |
-      |              | forward TD1      | |                                       |
+   from which the TI is received).  RI-PIT(dummy) is created whenever TI
+   is received.  However, RI-PIT(dummy) is not used for packet
+   forwarding; it is only referred to create the actual PIT entry for RI
+   (RI-PIT, hereafter).  When a forwarder receives RI, it creates RI-PIT
+   by copying the downstream and upstream faces from the RI-PIT(dummy)
+   with the same RNP.
+
+   One reason to maintain separate RI-PIT(dummy) and RI-PIT is to
+   support the case where multiple chunks [I-D.mosko-icnrg-ccnxchunking]
+   are requested using a single Reflexive Interest.  Here are some
+   examples of chunked names:
+
+   ccnx:/RNP1/Chunk=0  ---
+   ccnx:/RNP1/Chunk=1  EndChunkNumber=2
+   ccnx:/RNP1/Chunk=2  EndChunkNumber=2
+
+
+   ccnx:/RNP1/Alice/video.mp4/Chunk=0 ...
+   ccnx:/RNP1/Alice/video.mp4/Chunk=1 EndChunkNumber=2
+   ccnx:/RNP1/Alice/video.mp4/Chunk=2 EndChunkNumber=2
+
+             Figure 3: Chunked responses to Reflexive Interests
+
+   RI-PIT includes a chunk number to the RNP, while RI-PIT(dummy) does
+   not.  Like an ordinary PIT entry, RI-PIT is erased whenever the
+   corresponding RD is forwarded through the downstream face, while RI-
+   PIT(dummy) is erased when the RI-PIT(dummy) lifetime expires or
+   Trigger Data (TD) is received at the forwarder.
+
+      |  *[HA]* We need to consider multiple RIs are forwarded via RI-
+      |  PIT, because the pushed data may consist of multiple chunks.
+      |  Note that it is not the case I mentioned in Section 4.4.
+      |  Multiple RI packets (whose RNP are same but the segment (chunk)
+      |  numbers are different) can be forwarded based on RI-PIT.
+      |  Therefore, RI-PIT is not immediately erased when a single RD is
+      |  returned.
+
++-----------+         +-----------+                 +-----------+
+| Consumer  |         | Forwarder |                 | Producer  |
++-----------+         +-----------+                 +-----------+
+      |                     |                             |
+      | TI1                 |                             |
+      |-------------------->|                             |
+      | ------------------\ |                             |
+      | | Record fullname |-|                             |
+      | | in TI-PIT(TI1)  | |                             |
+      | |-----------------| |                             |
+      |                     |                             |
 
 
 
@@ -730,11 +730,72 @@ Oran, et al.              Expires 14 April 2025                [Page 13]
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
-      |              |------------------| |                                       |
-      |                                   |                                       |
-      |                               TD1 |                                       |
-      |<----------------------------------|                                       |
-      |                                   |                                       |
+      |                     | TI1                         |
+      |                     |---------------------------->|
+      |                     | ---------------------\      |
+      |                     |-| Add RNP to         |      |
+      |                     | | RI-PIT(dummy)(RI1) |      |
+      |                     | |--------------------|      |
+      |                     |                             | ------------\
+      |                     |                             |-| Check     |
+      |                     |                             | | prefix,   |
+      |                     |                             | | creating  |
+      |                     |                             | | Reflexive |
+      |                     |                             | | Interest  |
+      |                     |                             | | state     |
+      |                     |                             | |-----------|
+      |                     |                             |
+      |                     |                         RI1 |
+      |                     |<----------------------------|
+      |                     | ----------------------\     |
+      |                     |-| check match         |     |
+      |                     | | of RI-PIT(dummy)    |     |
+      |                     | | create RI-PIT(RI1), |     |
+      |                     | | forward RI1         |     |
+      |                     | |---------------------|     |
+      |                     |                             |
+      |                 RI1 |                             |
+      |<--------------------|                             |
+      |                     |                             |
+      | RD1 obj             |                             |
+      |-------------------->|                             |
+      | ------------------\ |                             |
+      | | consume PIT(I2) |-|                             |
+      | | entry           | |                             |
+      | | and             | |                             |
+      | | forward RD1     | |                             |
+      | |-----------------| |                             |
+      |                     | ----------------------\     |
+      |                     |-| satisfy RI-PIT(RI1) |     |
+      |                     | |---------------------|     |
+      |                     |                             |
+      |                     | RD1                         |
+      |                     |---------------------------->|
+      |                     |                             | -------------\
+      |                     |                             |-| all        |
+      |                     |                             | | parameters |
+      |                     |                             | | received,  |
+      |                     |                             | | answer TI1 |
+      |                     |                             | |------------|
+      |                     |                             |
+
+
+
+Oran, et al.              Expires 14 April 2025                [Page 14]
+
+Internet-Draft          ICN Reflexive Forwarding            October 2024
+
+
+      |                     |                  TD1 object |
+      |                     |<----------------------------|
+      |-------------------\ |                             |
+      || satisfy PIT(I1), |-|                             |
+      || forward TD1      | |                             |
+      ||------------------| |                             |
+      |                     |                             |
+      |                 TD1 |                             |
+      |<--------------------|                             |
+      |                     |                             |
     Legend:
     TI1: Trigger Interest #1 containing the Reflexive Name Prefix TLV
     RI1: Reflexive Interest with Reflexive Name Prefix Segment
@@ -742,7 +803,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
     RD1: Data message, answering RI1
     TD1: Data message, answering TI1
 
-              Figure 3: Overview of Message Flow in CCNx
+              Figure 4: Overview of Message Flow in CCNx
 
 4.3.  Consumer Operation
 
@@ -750,11 +811,11 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
    Trigger Interest (TI) with a Reflexive Name Prefix (RNP) TLV that is
    used by the producer when issuing Reflexive Interests (RI) back to
    the consumer.  Upon receiving a Reflexive Interest (e.g.  RI1 in
-   Figure 2 and Figure 3) from a producer in response to the Interest
+   Figure 2 and Figure 4) from a producer in response to the Interest
    whose first name segment is the RNP supplied earlier, the consumer
    SHOULD perform a name match against the object specified in the RI,
    and return that object to the producer in a conventional Data
-   message, (e.g.  RD1 in Figure 2 and Figure 3).
+   message, (e.g.  RD1 in Figure 2 and Figure 4).
 
 4.4.  Naming of Reflexive Interests
 
@@ -768,6 +829,19 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
    reading.  In other cases, the full names of the individual objects
    must be communicated via the RNP in the original Interest message.
 
+
+
+
+
+
+
+
+
+Oran, et al.              Expires 14 April 2025                [Page 15]
+
+Internet-Draft          ICN Reflexive Forwarding            October 2024
+
+
    We define a new typed name segment, identified by the _Reflexive
    Interest Name Segment TLV_. The Reflexive Interest Name Segment TLV
    MUST be the first (i.e. high order) name segment of any Reflexive
@@ -778,14 +852,6 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
    The value of the Reflexive Interest Name Segment TLV is assigned by
    the consumer, which provides the entropy required to uniquely
    identify the issuing consumer for the duration of any outstanding
-
-
-
-Oran, et al.              Expires 14 April 2025                [Page 14]
-
-Internet-Draft          ICN Reflexive Forwarding            October 2024
-
-
    Interest-Data exchange.  For example, a UUID, which is a random 128
    bit quantity specified in [RFC4122], or a hash value signed by the
    consumer's secret key (see Section 4.4.1) can be used for the value
@@ -823,6 +889,15 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
        Manifest implies multiple reflexive Interest/Data exchanges with
        the consumer.
 
+
+
+
+
+Oran, et al.              Expires 14 April 2025                [Page 16]
+
+Internet-Draft          ICN Reflexive Forwarding            October 2024
+
+
    4.  Multiple Reflexive Name Prefix TLVs MAY be included in the
        Interest message if none of the above 3 options covers the
        desired use case.
@@ -834,29 +909,23 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
    forwarder MAY optimize for the case of a single Reflexive Name Prefix
    TLV at the expense of those with more than one.
 
-
-
-
-Oran, et al.              Expires 14 April 2025                [Page 15]
-
-Internet-Draft          ICN Reflexive Forwarding            October 2024
-
-
-   *[HA]* IMO, above statement is not sufficient as "SHOULD NOT" does
-   not prohibit for some implementations to implement multiple RNPs for
-   a single RI.  It is necessary to clarify how to deal with or support
-   multiple RNPs included in one TI.  For example, if TI includes two
-   RNPs, the following cases can be considered; (1) one RI including two
-   RNPs is invoked, and (2) each RNP is sent one RI separately, meaning
-   two RIs are invoked for two RNPs.  For (1), RD must include two data
-   objects, while it is a different concept from the regular CCNx (and
-   NDN, maybe); therefore (1) is not suitable.  On the other hand, for
-   (2), two RDs are sent for each data object.  It requires that two RI-
-   PIT entries must be maintained when TI is received, but it may be
-   able to work properly.  So, my recommendation is that the following
-   sentence should be appended at the above statemtents: "Note that if
-   multiple RNP TLVs are included in one TI, each RNP TLV MUST be
-   separately formed and independently sent in one RI."
+      |  *[HA]* IMO, above statement is not sufficient as "SHOULD NOT"
+      |  does not prohibit for some implementations to implement
+      |  multiple RNPs for a single RI.  It is necessary to clarify how
+      |  to deal with or support multiple RNPs included in one TI.  For
+      |  example, if TI includes two RNPs, the following cases can be
+      |  considered; (1) one RI including two RNPs is invoked, and (2)
+      |  each RNP is sent one RI separately, meaning two RIs are invoked
+      |  for two RNPs.  For (1), RD must include two data objects, while
+      |  it is a different concept from the regular CCNx (and NDN,
+      |  maybe); therefore (1) is not suitable.  On the other hand, for
+      |  (2), two RDs are sent for each data object.  It requires that
+      |  two RI-PIT entries must be maintained when TI is received, but
+      |  it may be able to work properly.  So, my recommendation is that
+      |  the following sentence should be appended at the above
+      |  statemtents: "Note that if multiple RNP TLVs are included in
+      |  one TI, each RNP TLV MUST be separately formed and
+      |  independently sent in one RI."
 
    A producer, upon receiving an Interest with one or more Reflexive
    Name Prefix TLVs, may decide it needs to retrieve the associated data
@@ -879,26 +948,25 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
    explanation will be TODO.
 
 
-   ccnx:/RNP1/Chunk=0 ...
-   ccnx:/RNP1/Chunk=1 EndChunkNumber=2
-   ccnx:/RNP1/Chunk=2 EndChunkNumber=2
 
-                                  Figure 4
-
-   ccnx:/RNP1/Alice/video.mp4/Chunk=0 ...
-   ccnx:/RNP1/Alice/video.mp4/Chunk=1 EndChunkNumber=2
-   ccnx:/RNP1/Alice/video.mp4/Chunk=2 EndChunkNumber=2
-
-                                  Figure 5
-
-
-
-Oran, et al.              Expires 14 April 2025                [Page 16]
+Oran, et al.              Expires 14 April 2025                [Page 17]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
-   *[HA]*I will complete this section later.
+      |  *[HA]*I will complete this section later.
+
+      |  *[DO]*signed stuff in Interests inflates interest message size,
+      |  which is a major thing we are trying to avoid by inventing
+      |  reflexive forwarding. also...
+
+      |  *[DO]*Doesn't this require that the producer have the
+      |  consumer's public key in its possession?  In fact, how does it
+      |  figure out who the consumer is in the first place?  An
+      |  important use case for reflexive forwarding in the first place
+      |  is to use RI/RD exchanges to do key bootstrapping.  If the
+      |  producer already has the consumer's public key why bother with
+      |  the reflexive exchange in the first place?
 
 4.5.  Producer Operation
 
@@ -934,6 +1002,14 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
        *Note:* Given that reflexive interests initiate exchanges
        constrained by the Interest Lifetime of the enclosing Interest/
        Data exchange, the value of caching the Data responses in
+
+
+
+Oran, et al.              Expires 14 April 2025                [Page 18]
+
+Internet-Draft          ICN Reflexive Forwarding            October 2024
+
+
        forwarders is for short-term recovery from lost packets as
        opposed to optimizing longer term caching gain.  For this reason
        we avoid mandating or strongly recommending the CS check for
@@ -946,14 +1022,6 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
    3.  The forwarders MUST check that the high-order Name segment of the
        Interest is of type Reflexive Name Segment.  If not, while this
        could strictly speaking be considered an error, the forwarder
-
-
-
-Oran, et al.              Expires 14 April 2025                [Page 17]
-
-Internet-Draft          ICN Reflexive Forwarding            October 2024
-
-
        SHOULD simply process the Interest as a normal non-reflexive
        Interest and skip the steps below.  A match indicates that this
        is a Reflexive Interest corresponding to the original consumer to
@@ -982,33 +1050,33 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
           Prefix TLV
 
    Create PIT entry for Interest;
-   Optionally create a dummy PIT entry for any potential Reflexive Interests expectd to math the RNP (or RNPs) in the Trigger Interest;
+   Optionally create a dummy PIT entry for any potential Reflexive Interests
+        expected to match the RNP (or RNPs) in the Trigger Interest;
    Forward Interest upstream;
 
 4.6.1.2.  Processing of a Reflexive Interest
 
-   Use RNP of Interest's Name TLV to lookup original Interest PIT entry;
-
-   IF PIT entry of original Interest not is found
-       Issue an Interest Return with "No Route" error back to the producer;
-       RETURN;
-   ELSE
-       Create PIT entry for Reflexive Interest (or optionally modify the dummy RI PIT entry that was created together with the Trigger Interest PIT entry);
-       Process as a normal Interest;
 
 
 
 
 
-
-
-
-
-
-Oran, et al.              Expires 14 April 2025                [Page 18]
+Oran, et al.              Expires 14 April 2025                [Page 19]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
+
+   Use RNP of Interest's Name TLV to lookup original Interest PIT entry;
+
+   IF PIT entry of original Interest not is found
+       Issue an Interest Return with "No Route" error
+            back to the producer;
+       RETURN;
+   ELSE
+       Create PIT entry for Reflexive Interest
+       (or optionally modify the dummy RI PIT entry that was created together
+        with the Trigger Interest PIT entry);
+       Process as a normal Interest;
 
 4.7.  State coupling between producer and consumer
 
@@ -1046,6 +1114,14 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
    authentication credentials and (optional) parameters using reflexive
    Interest-Data exchanges.
 
+
+
+
+Oran, et al.              Expires 14 April 2025                [Page 20]
+
+Internet-Draft          ICN Reflexive Forwarding            October 2024
+
+
    When the server has obtained the necessary credentials and input
    parameters, it can decide to commit computing resources, starts the
    compute process, and returns a handle ("Thunk") in the final Data
@@ -1055,20 +1131,52 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
    regular Interest-Data exchange (outside the Reflexive-Interest
    transaction), using the Thunk as a name for the computation result.
 
-   Figure 6 depicts an abstract message diagram for RICE.  In addition
+   Figure 5 depicts an abstract message diagram for RICE.  In addition
    to the 4-way Reflexive Forwarding Handshake (see Figure 2 for the
    details of the interaction), RICE adds another (standard) ICN
-
-
-
-Oran, et al.              Expires 14 April 2025                [Page 19]
-
-Internet-Draft          ICN Reflexive Forwarding            October 2024
-
-
    Interest/Data exchange for transmitting the RMI result.  The Thunk
    name is provided to the consumer in the D1 DATA message (answering
    the initial I1 Interest).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Oran, et al.              Expires 14 April 2025                [Page 21]
+
+Internet-Draft          ICN Reflexive Forwarding            October 2024
+
 
    +-----------+              +-----------+
    | Consumer  |              | Producer  |
@@ -1110,18 +1218,6 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
          |                       D2 |
          |<-------------------------|
          |                          |
-
-
-
-
-
-
-
-Oran, et al.              Expires 14 April 2025                [Page 20]
-
-Internet-Draft          ICN Reflexive Forwarding            October 2024
-
-
        Legend:
        I1: Interest #1 containing the Reflexive Name Prefix TLV
        D1: Data message, answering initiating I1 Interest,
@@ -1131,7 +1227,14 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
        I2: Regular Interest for Thunk (compute result)
        D2: Data message, answering I2
 
-                        Figure 6: RICE Message Flow
+
+
+Oran, et al.              Expires 14 April 2025                [Page 22]
+
+Internet-Draft          ICN Reflexive Forwarding            October 2024
+
+
+                        Figure 5: RICE Message Flow
 
 5.2.  RESTful Web Interactions
 
@@ -1170,14 +1273,6 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
    An initial design for achieving RESTful ICN that employs reflexive
    forwarding is presented in [Kutscher2022].
 
-
-
-
-Oran, et al.              Expires 14 April 2025                [Page 21]
-
-Internet-Draft          ICN Reflexive Forwarding            October 2024
-
-
 5.3.  Achieving simple data pull from consumers with reflexive Interests
 
    An oft-cited use case for ICN network architectures is _Internet of
@@ -1187,6 +1282,14 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
    addressing the issues outlined in Section 1.1.  The reflexive
    forwarding extension may substantially ameliorate the documented
    difficulties by allowing a different model for the basic interaction
+
+
+
+Oran, et al.              Expires 14 April 2025                [Page 23]
+
+Internet-Draft          ICN Reflexive Forwarding            October 2024
+
+
    of sensors with the ICN network.
 
    Instead of simply acting as a producer (either directly to the
@@ -1208,7 +1311,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
    We note that this interaction approach mirrors the earlier efforts
    using Interest-Interest-Data designs.
 
-   Figure 7 depicts this interaction with the (optional) D1 message.
+   Figure 6 depicts this interaction with the (optional) D1 message.
    See Figure 2 for the details of the general Reflexive Forwarding
    interaction.
 
@@ -1229,7 +1332,16 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 14 April 2025                [Page 22]
+
+
+
+
+
+
+
+
+
+Oran, et al.              Expires 14 April 2025                [Page 24]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -1280,12 +1392,12 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
        RD1: Data message, answering RI, returning IoT data object
        D1: (optional) Data answering I1
 
-                    Figure 7: "Phone Home" Message Flow
+                    Figure 6: "Phone Home" Message Flow
 
 
 
 
-Oran, et al.              Expires 14 April 2025                [Page 23]
+Oran, et al.              Expires 14 April 2025                [Page 25]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -1341,7 +1453,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 14 April 2025                [Page 24]
+Oran, et al.              Expires 14 April 2025                [Page 26]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -1356,16 +1468,19 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 6.1.  Forwarder implementation considerations
 
-   *[HA]* IMO, this section should be in Appendix as it's too
-   implementation oriented.  Moreover, almost all descriptions are not
-   directly related to Reflexive forwarding, which means, there is no
-   relation between Reflexive forwarding and PIT token used for high
-   speed router implementations.  (BTW, "high speed router" is too
-   ambiguous.  We presented a CCNx router implementation on FPGA ("CCNx
-   Router on FPGA Accelerator Achieving Predictable Performance", Proc.
-   ACM ICN 2023), which is also a very high speed router, but ours
-   implemented the different ways (e.g., no PIT token in our
-   implementation).)
+      |  *[HA]* IMO, this section should be in Appendix as it's too
+      |  implementation oriented.  Moreover, almost all descriptions are
+      |  not directly related to Reflexive forwarding, which means,
+      |  there is no relation between Reflexive forwarding and PIT token
+      |  used for high speed router implementations.  (BTW, "high speed
+      |  router" is too ambiguous.  We presented a CCNx router
+      |  implementation on FPGA ("CCNx Router on FPGA Accelerator
+      |  Achieving Predictable Performance", Proc.  ACM ICN 2023), which
+      |  is also a very high speed router, but ours implemented the
+      |  different ways (e.g., no PIT token in our implementation).)
+
+      |  *[DO]*Is the rest of this ok now that the PIT Token stuff is
+      |  gone?
 
 6.1.1.  Interactions with Input Processing of Interest and Data packets
 
@@ -1390,18 +1505,19 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
    There are a few additional considerations to highlight for high-speed
    forwarders however; these are discussed in the following paragraphs.
 
-   In order to achieve forwarding scalability, high speed forwarders
-   need to exploit available parallelism in both CPU (through multiple
-   cores) and memory (through multiport DRAM and limiting accesses to
-   both DRAM and L3 caches).  One commonly-used technique is _PIT
 
 
 
-Oran, et al.              Expires 14 April 2025                [Page 25]
+
+Oran, et al.              Expires 14 April 2025                [Page 27]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
+   In order to achieve forwarding scalability, high speed forwarders
+   need to exploit available parallelism in both CPU (through multiple
+   cores) and memory (through multiport DRAM and limiting accesses to
+   both DRAM and L3 caches).  One commonly-used technique is _PIT
    sharding_, where the forwarder-global PIT is partitoned among cores
    such that all processing of both Interest and Data for a given Name
    is directed at the same core, optimizing both L1 I-cache utilization
@@ -1439,6 +1555,21 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
    the absence of a superior alternative technique, it is RECOMMENDED
    that all forwarders implement the following algorithm.
 
+
+
+
+
+
+
+
+
+
+
+Oran, et al.              Expires 14 April 2025                [Page 28]
+
+Internet-Draft          ICN Reflexive Forwarding            October 2024
+
+
    If and when a reflexive Interest arrives matching the original
    Interest's PIT entry, the forwarder examines the Interest lifetime of
    the arriving reflexive Interest.  Call this value _IL_r_. The
@@ -1447,16 +1578,6 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
    lifetime of the original Interest accounts for the additional 1.5
    RTTs that may occur as a result of the reflexive Interest-Data
    exchange.
-
-
-
-
-
-
-Oran, et al.              Expires 14 April 2025                [Page 26]
-
-Internet-Draft          ICN Reflexive Forwarding            October 2024
-
 
       |  We note that this is not unduly expensive in this design where
       |  the two PIT entries are guaranteed to be in the same PIT shard
@@ -1492,27 +1613,25 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
    each.  This in turn means that a different Forward PIT-Token (FPT)
    will be placed in the individual forwarded Interests.
 
+
+
+
+
+
+
+
+
+Oran, et al.              Expires 14 April 2025                [Page 29]
+
+Internet-Draft          ICN Reflexive Forwarding            October 2024
+
+
    Forwarders supporting multi-path forwarding may of course exploit
    this capability for Interests with identical reflexive name prefix
    TLVs, like any other Interests.  There are two sub-cases of multi-
    next hop behavior; regular multi-path (where the split traffic
    reconverges further upstream) and multi-destination (where it doesn’t
    and the Interest reaches multiple producers).
-
-
-
-
-
-
-
-
-
-
-
-Oran, et al.              Expires 14 April 2025                [Page 27]
-
-Internet-Draft          ICN Reflexive Forwarding            October 2024
-
 
    For multi-path, since the Interests that converge upstream carry
    identical reflexive Interest name TLVs, they will get aggregated.
@@ -1555,20 +1674,20 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
         a value no greater than the Interest lifetime (T_INTLIFE) of the
         original Interest messsage.
 
+
+
+
+Oran, et al.              Expires 14 April 2025                [Page 30]
+
+Internet-Draft          ICN Reflexive Forwarding            October 2024
+
+
    (b)  Set the payload type (T_PAYLDTYPE) according to the type of
         object being returned (e.g. object, link, manifest)
 
    (c)  Set the expiry time (T_EXPIRY) to a value greater than _now_,
         and less than or equal to the _now_ + Interest lifetime
         (T_INTLIFE) of the original Interest messsage.
-
-
-
-
-Oran, et al.              Expires 14 April 2025                [Page 28]
-
-Internet-Draft          ICN Reflexive Forwarding            October 2024
-
 
 6.2.2.  Terminating unwanted reflexive Interest exchanges
 
@@ -1611,20 +1730,20 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
    correct operation of the scheme requires an unbroken chain of
    forwarders between the consumer and the desired producer that support
    the Reflexive Name Prefix TLV, the Forward and Backward PIT-Token
+
+
+
+Oran, et al.              Expires 14 April 2025                [Page 31]
+
+Internet-Draft          ICN Reflexive Forwarding            October 2024
+
+
    TLVs and the corresponding forwarder capabilities specified in
    Section 4.6.  When this invariant is not satisfied, some means is
    necessary to detect and hopefully recover from the error.  We have
    identified three possible approaches to handling the lack of
    universal deployment of forwarders supporting the reflexive
    forwarding scheme.
-
-
-
-
-Oran, et al.              Expires 14 April 2025                [Page 29]
-
-Internet-Draft          ICN Reflexive Forwarding            October 2024
-
 
    The first approach simply lets the producer detect the error by
    getting a "no route to destination" error when trying to send an
@@ -1666,21 +1785,16 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
    for CCNx/NDN would have a number of other substantial benefits, which
    makes it worth seriously considering anyway.
 
-8.  Mapping to CCNx and NDN packet encodings
 
 
 
 
-
-
-
-
-
-
-Oran, et al.              Expires 14 April 2025                [Page 30]
+Oran, et al.              Expires 14 April 2025                [Page 32]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
+
+8.  Mapping to CCNx and NDN packet encodings
 
 8.1.  Packet encoding for CCNx
 
@@ -1705,7 +1819,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
      /                     Reflexive Prefix Name                     /
      +---------------+---------------+---------------+---------------+
 
-                    Figure 8: Reflexive Name Prefix TLV
+                    Figure 7: Reflexive Name Prefix TLV
 
    Type:  Format of the Value field.  For the Reflexive Name Prefix TLV,
       the type value MUST be T_REFLEXIVE_NAME in the current
@@ -1731,9 +1845,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-
-
-Oran, et al.              Expires 14 April 2025                [Page 31]
+Oran, et al.              Expires 14 April 2025                [Page 33]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -1789,7 +1901,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 14 April 2025                [Page 32]
+Oran, et al.              Expires 14 April 2025                [Page 34]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -1845,28 +1957,12 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 14 April 2025                [Page 33]
+Oran, et al.              Expires 14 April 2025                [Page 35]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
-10.3.  Potential Vulnerabilities from the use of PIT Tokens
-
-   By including PIT Tokens in the CCNx or NDN protocol, an attacker has
-   the opportunity to manipulate these values by either replacement or
-   elision.  So far we do not have enough experimental data nor formal
-   security analysis to assess whether useful attacks against the
-   protocol via the PIT Tokens can be mounted.  The fields are carried
-   differently in CCNx and NDN, but in both cases they are outside the
-   cryptographic integrity envelope and not encrypted for
-   confidentiality as part of the base protocols.
-
-   For both cases however, the potential vulnerabilities can be foiled,
-   at least for point-to-point communication over an L2 hop, by
-   employing either link-layer encryption (in the case of CCNx), or by
-   encrypting the NDNLPv2 protocol, which carries these fields for NDN.
-
-10.4.  Privacy Considerations
+10.3.  Privacy Considerations
 
    ICN architectures like CCNx and NDN provide a rich tapestry of
    interesting privacy issues, which have been extensively explored in
@@ -1897,15 +1993,6 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 11.  Normative References
 
-
-
-
-
-Oran, et al.              Expires 14 April 2025                [Page 34]
-
-Internet-Draft          ICN Reflexive Forwarding            October 2024
-
-
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
@@ -1919,6 +2006,17 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
    [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/info/rfc8174>.
+
+
+
+
+
+
+
+Oran, et al.              Expires 14 April 2025                [Page 36]
+
+Internet-Draft          ICN Reflexive Forwarding            October 2024
+
 
    [RFC8569]  Mosko, M., Solis, I., and C. Wood, "Content-Centric
               Networking (CCNx) Semantics", RFC 8569,
@@ -1940,27 +2038,20 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
               DOI https://doi.org/10.1145/2018584.2018589, August 2011,
               <https://dl.acm.org/doi/10.1145/2018584.2018589>.
 
+   [Asaeda2019]
+              Asaeda, H., Ooka, A., Matsuzono, K., and R. Li, "Cefore:
+              Software Platform Enabling Content-Centric Networking and
+              Beyond", DOI https://doi.org/10.1587/transcom.2018EII0001,
+              2019,
+              <https://www.jstage.jst.go.jp/article/transcom/E102.B/9/
+              E102.B_2018EII0001/_article>.
+
    [Auge2018] Augé, J., Carofiglio, G., Grassi, G., Muscariello, L.,
               Pau, G., and X. Zeng, "MAP-Me: Managing Anchor-Less
               Producer Mobility in Content-Centric Networks, in IEEE
               Transactions on Network, Volume 15, Issue 2",
               DOI 10.1109/TNSM.2018.2796720, June 2018,
               <https://ieeexplore.ieee.org/document/8267132>.
-
-
-
-
-
-
-
-
-
-
-
-Oran, et al.              Expires 14 April 2025                [Page 35]
-
-Internet-Draft          ICN Reflexive Forwarding            October 2024
-
 
    [Baccelli2014]
               Baccelli, E., Mehlis, C., Hahm, O., Schmidt, T., and M.
@@ -1970,6 +2061,18 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
               Centric Networking", DOI 10.1145/2660129.2660144,
               September 2014,
               <https://dl.acm.org/doi/abs/10.1145/2660129.2660144>.
+
+
+
+
+
+
+
+
+Oran, et al.              Expires 14 April 2025                [Page 37]
+
+Internet-Draft          ICN Reflexive Forwarding            October 2024
+
 
    [Carzaniga2011]
               Carzaniga, A., Papalini, M., and A.L. Wolf, "Content-Based
@@ -2010,17 +2113,22 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
               Gündoğan, C., Kietzmann, P., Schmidt, T., and M. Wählisch,
               "HoPP: publish-subscribe for the constrained IoT, in ICN
               '18: Proceedings of the 5th ACM Conference on Information-
-
-
-
-Oran, et al.              Expires 14 April 2025                [Page 36]
-
-Internet-Draft          ICN Reflexive Forwarding            October 2024
-
-
               Centric Networking", DOI 10.1145/3267955.3269020,
               September 2018,
               <https://dl.acm.org/doi/abs/10.1145/3267955.3269020>.
+
+
+
+
+
+
+
+
+
+Oran, et al.              Expires 14 April 2025                [Page 38]
+
+Internet-Draft          ICN Reflexive Forwarding            October 2024
+
 
    [I-D.irtf-icnrg-flic]
               Tschudin, C., Wood, C. A., Mosko, M., and D. R. Oran,
@@ -2035,6 +2143,12 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
               pathsteering-07, 29 September 2023,
               <https://datatracker.ietf.org/doc/html/draft-irtf-icnrg-
               pathsteering-07>.
+
+   [I-D.mosko-icnrg-ccnxchunking]
+              Mosko, M., "CCNx Content Object Chunking", Work in
+              Progress, Internet-Draft, draft-mosko-icnrg-ccnxchunking-
+              02, 1 June 2016, <https://datatracker.ietf.org/doc/html/
+              draft-mosko-icnrg-ccnxchunking-02>.
 
    [Krol2018] Krol, M., Habak, K., Oran, D., Kutscher, D., and I.
               Psaras, "RICE: Remote Method Invocation in ICN, in
@@ -2067,9 +2181,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-
-
-Oran, et al.              Expires 14 April 2025                [Page 37]
+Oran, et al.              Expires 14 April 2025                [Page 39]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -2125,7 +2237,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 14 April 2025                [Page 38]
+Oran, et al.              Expires 14 April 2025                [Page 40]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -2181,7 +2293,7 @@ A.1.  Handling reflexive interests using dynamic FIB entries
 
 
 
-Oran, et al.              Expires 14 April 2025                [Page 39]
+Oran, et al.              Expires 14 April 2025                [Page 41]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -2237,7 +2349,7 @@ A.1.1.  Design complexities and performance issues with FIB-based design
 
 
 
-Oran, et al.              Expires 14 April 2025                [Page 40]
+Oran, et al.              Expires 14 April 2025                [Page 42]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -2293,7 +2405,7 @@ A.1.2.  Interactions between FIB-based design and Interest Lifetime
 
 
 
-Oran, et al.              Expires 14 April 2025                [Page 41]
+Oran, et al.              Expires 14 April 2025                [Page 43]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -2349,7 +2461,7 @@ A.2.  Reflexive forwarding using Path Steering
 
 
 
-Oran, et al.              Expires 14 April 2025                [Page 42]
+Oran, et al.              Expires 14 April 2025                [Page 44]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -2398,14 +2510,14 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
     D1: Data message, answering initiating I1 Interest
     D2: Data message, answering RI
 
-         Figure 9: Message Flow Overview using Path Steering
+         Figure 8: Message Flow Overview using Path Steering
 
 
 
 
 
 
-Oran, et al.              Expires 14 April 2025                [Page 43]
+Oran, et al.              Expires 14 April 2025                [Page 45]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -2461,7 +2573,7 @@ Authors' Addresses
 
 
 
-Oran, et al.              Expires 14 April 2025                [Page 44]
+Oran, et al.              Expires 14 April 2025                [Page 46]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -2517,4 +2629,4 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 14 April 2025                [Page 45]
+Oran, et al.              Expires 14 April 2025                [Page 47]

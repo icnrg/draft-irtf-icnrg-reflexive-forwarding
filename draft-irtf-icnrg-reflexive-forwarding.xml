@@ -314,12 +314,9 @@
 	 <t>For general ICN-related terms, we adopt the terms defined in <xref target="RFC8793"/>. For CCNx-specific terms, we use the terms defined in <xref target="RFC8569"/> and <xref target="RFC8609"/>. This specification defines the following additional terms:</t>
 	 <dl>
 	 	<dt><strong>Reflexive Interest</strong> (RI)</dt><dd>An interest message sent from a producer back towards a consumer to fetch data needed to satisfy the original interest.</dd>
-		<dt><strong>Trigger Interest</strong> (TI)</dt><dd>An interest message sent from a consumer to a producer to trigger Reflexive Interest sent by the producer.</dd>
+		<dt><strong>Trigger Interest</strong> (TI)</dt><dd>An interest message sent from a consumer to a producer to trigger one or more Reflexive Interests sent by the producer.</dd>
 	 	<dt><strong>Reflexive Name Segment</strong></dt><dd>A high-order typed name segment which identifies an Interest as being a Reflexive Interest instead of a normal Interest.</dd>
 	 	<dt><strong>Reflexive Name Prefix TLV</strong> (RNP)</dt><dd>An Interest message TLV indicating to a producer that it may fetch data from the sending consumer by issuing one or more corresponding Reflexive Interests. It consists of a Name prefix whose high-order is a Reflexive Name Segment as defined above.</dd>
-	 	<dt><strong>PIT Token</strong></dt><dd>A hop-by-hop option in either an Interest or data message allowing a forwarder to locate the PIT entry of the corresponding Interest/Data exchange without the overhead of a full exact name lookup. Used in NDN.</dd>
-	 	<dt><strong>Forward PIT Token</strong> (FPT)</dt><dd>A PIT Token added when forwarding an Interest to refer to the PIT entry the forwarder has made for that Interest/Data exchange. Used in NDN.</dd>
-	 	<dt><strong>Reverse PIT Token</strong> (RPT)</dt><dd>A PIT token (copied from the corresponding forward PIT token) added to either a Data message or a Reflexive Interest to allow a forwarder to locate the PIT entry of the corresponding interest/Data exchange without the overhead of a full exact name lookup. Used in NDN.</dd>
 	 </dl>
 	</section>
 
@@ -482,15 +479,13 @@
   <name>Detailed Specification of Reflexive Forwarding</name>
 	<t>The following sections provide the normative details on each of these design elements.</t>
 	 
-	<section anchor="NDN_spec"><name>NDN Specific Design</name>
+	<section anchor="generic_spec"><name>Generic Forwarder Design</name>
 	 
-	<t>
-	The following describes the operation of a CCNx or NDN forwarder enhanced to accommodate reflexive forwarding via Trigger Interests, Reflexive Interests, and Reflexive Data messages. This description likely adequate for most implementation approaches. However, there are possible performance bottlenecks for reflexive forwarding that employ highly parallel forwarding schemes using multi-core server systems. Such systems may use <em>PIT Sharding</em> across cores, and therefore benefit from additional optional protocol enhancements, such as the "PIT Token" protocol elements pioneered in <xref target="Shi2020"/>.</t>
+	<t>The following describes the operation of a CCNx or NDN forwarder enhanced to accommodate reflexive forwarding via Trigger Interests, Reflexive Interests, and Reflexive Data messages. This description likely adequate for most implementation approaches. However, there are possible performance bottlenecks for reflexive forwarding that employ highly parallel forwarding schemes using multi-core server systems. Such systems may use <em>PIT Sharding</em> across cores, and therefore benefit from additional optional protocol enhancements, such as the "PIT Token" protocol elements pioneered in <xref target="Shi2020"/>. Alternatively, techniques such as those employed by the <xref target="Asaeda2019">Cefore</xref> forwarder from  NICT may be employed.</t>
 		
-	<t>The overall interaction flow for reflexive forwarding in NDN is illustrated below in <xref
-	  target="overall-message-flow"/>.</t>
+	<t>The overall interaction flow for reflexive forwarding is illustrated below in <xref target="overall-message-flow"/>.</t>
 	  	
-	<figure anchor="overall-message-flow"><name>Overview of Message Flow in NDN</name>
+	<figure anchor="overall-message-flow"><name>Overview of Message Flow</name>
 	  <artwork type="ascii-art" src="message-flow-generic.txt"/>
 	  <artwork type="ascii-art">
     Legend:
@@ -502,38 +497,35 @@
 	  </artwork>
 	</figure>
 	
-	<t>
-	The following sub-sections further describe reflexive forwarding operation for CCNx and NDN respectively.
-	</t>
+	<t>The following sub-sections further describe reflexive forwarding operation for CCNx and NDN respectively.</t>
 	</section>
 	
 	<section anchor="CCNx_spec"><name>CCNx Specific Design</name>
-<!--	<t><strong>[HA]</strong> Previously, I said;
-	"CCNx does not occur PIT shard as it makes the exact matching for name lookup in PIT. Therefore, it is not necessary to configure PIT token, FPT, and RPT in CCNx." However, I heard that currently NDN also only accepts exact matching for name lookup in PIT, so I simply mention CCNx does NOT use PIT token as follows.</t>
 
-	<t>CCNx does not use PIT token, FPT, and RPT for reflexive forwarding. As well, the hop-by-hop header is not used for reflexive forwarding.</t> 
+	<t>The overall interaction flow for reflexive forwarding in CCNx, using the implementations approach in <xref target="Asaeda2019">CeFore</xref>, is described below and illustrated in <xref target="overall-message-flow-ccnx"/>.</t>
+		
+	<t>Forwarder operation for CCNx is slightly changed in the following respects when supporting Reflexive Interests. When a forwarder receives TI that will be sent toward the producer, the forwarder creates two PIT entries; (1) a regular PIT entry for TI (TI-PIT, hereafter) that consists of the name of the Name TLV in TI, downstream face (i.e., face from which the TI is received), and upstream face(s) (i.e., face(s) from which the TI is/are forwarded), and (2) a tentative PIT entry for RI (RI-PIT(dummy), hereafter) that includes Reflexive Name Prefix (RNP), downstream face (i.e., face(s) from which the TI is/are forwarded), and upstream face (i.e., face from which the TI is received). RI-PIT(dummy) is created whenever TI is received. However, RI-PIT(dummy) is not used for packet forwarding; it is only referred to create the actual PIT entry for RI (RI-PIT, hereafter). When a forwarder receives RI, it creates RI-PIT by copying the downstream and upstream faces from the RI-PIT(dummy) with the same RNP.</t>
 
-	<t><strong>[HA]</strong> If we need to consider PIT shard caused by multicore machines or multi thread implementations, we can simply use protocol-independent (non-protocol related) implementation. For example, core or thread can be selected by m=hash(RNP)mod(n), where n is the total number of cores/threads and m is the m-th PIT that can be assigned to m-th core/thread. All of m, n, and hash(RNP) can be obtained by itself (without any protocol support), unlike PIT token.</t> 
-
-	<t>
-	On the other hand, the forwarder operation for CCNx is slightly changed in the following respects when supporting Reflexive Interests. When a forwarder receives TI that will be sent toward the producer, the forwarder creates two PIT entries; (1) a regular PIT entry for TI (TI-PIT, hereafter) that consists of the name of the Name TLV in TI, downstream face (i.e., face from which the TI is received), and upstream face(s) (i.e., face(s) from which the TI is/are forwarded), and (2) a tentative PIT entry for RI (RI-PIT(dummy), hereafter) that includes Reflexive Name Prefix (RNP), downstream face (i.e., face(s) from which the TI is/are forwarded), and upstream face (i.e., face from which the TI is received). RI-PIT(dummy) is created whenever TI is received. However, RI-PIT(dummy) is not used for packet forwarding; it is only referred to create the actual PIT entry for RI (RI-PIT, hereafter). When a forwarder receives RI, it creates RI-PIT by copying the downstream and upstream faces from the RI-PIT(dummy) with the same RNP.
-	</t>
-
-	<t>The reason to maintain RI-PIT(dummy) and RI-PIT is to support the case where <xref target="I-D.mosko-icnrg-ccnxchunking">multiple chunks</xref> are sent using a single Reflexive Interest. Here are some examples of chunked names:</t>
+	<t>One reason to maintain separate RI-PIT(dummy) and RI-PIT is to support the case where <xref target="I-D.mosko-icnrg-ccnxchunking">multiple chunks</xref> are requested using a single Reflexive Interest. Here are some examples of chunked names:</t>
 	
-      <figure>
+      <figure><name>Chunked responses to Reflexive Interests</name>
         <artwork align="left"><![CDATA[
-ccnx:/RNP1/Chunk=0  ...
+ccnx:/RNP1/Chunk=0  ---
 ccnx:/RNP1/Chunk=1  EndChunkNumber=2
 ccnx:/RNP1/Chunk=2  EndChunkNumber=2
+]]>
+<![CDATA[
+ccnx:/RNP1/Alice/video.mp4/Chunk=0 ...
+ccnx:/RNP1/Alice/video.mp4/Chunk=1 EndChunkNumber=2
+ccnx:/RNP1/Alice/video.mp4/Chunk=2 EndChunkNumber=2
 ]]></artwork>
       </figure>
 	
-	<t>RI-PIT includes a chunk number to the RNP, while RI-PIT(dummy) does not. Like an ordinary PIT entry, RI-PIT is erased whenever the corresponding RD is forwarded through the downstream face, while RI-PIT(dummy) is erased when the RI-PIT(dummy) lifetime expires or Trigger Data (TD) is received at the forwarder.
-	</t>
-	<t><strong>[HA]</strong> We need to consider multiple RIs are forwarded via RI-PIT, because the pushed data may consist of multiple chunks. Note that it is not the case I mentioned in <xref target="naming" />. Multiple RI packets (whose RNP are same but the segment (chunk) numbers are different) can be forwarded based on RI-PIT. Therefore, RI-PIT is not immediately erased when a single RD is returned.</t> -->
+	<t>RI-PIT includes a chunk number to the RNP, while RI-PIT(dummy) does not. Like an ordinary PIT entry, RI-PIT is erased whenever the corresponding RD is forwarded through the downstream face, while RI-PIT(dummy) is erased when the RI-PIT(dummy) lifetime expires or Trigger Data (TD) is received at the forwarder.</t>
+	
+	<aside><t><strong>[HA]</strong> We need to consider multiple RIs are forwarded via RI-PIT, because the pushed data may consist of multiple chunks. Note that it is not the case I mentioned in <xref target="naming" />. Multiple RI packets (whose RNP are same but the segment (chunk) numbers are different) can be forwarded based on RI-PIT. Therefore, RI-PIT is not immediately erased when a single RD is returned.</t></aside>
 	 
-	<t>The overall interaction flow for reflexive forwarding in CCNx is illustrated below in <xref target="overall-message-flow-ccnx"/>.</t>
+	
 	  	
 	<figure anchor="overall-message-flow-ccnx"><name>Overview of Message Flow in CCNx</name>
 	  <artwork type="ascii-art" src="message-flow-generic-ccnx.txt"/>
@@ -586,8 +578,7 @@ ccnx:/RNP1/Chunk=2  EndChunkNumber=2
 <!-->	<t><strong>[HA]</strong> I'm confusing the difference between "Reflexive Interest Name Segment TLV" and "Reflexive Name Prefix (RNP) TLV". What are they different? Isn't it sufficient to only define "Reflexive Name Prefix (RNP) TLV"? In fact, "Reflexive Interest Name Segment *TLV*" is mentioned only in this section, although "Reflexive Interest Name Segment" (no *TLV*) is mentioned in Terminology section.
 	</t> -->
 
-	<t>
-	The value of the Reflexive Interest Name Segment TLV is assigned by the consumer, which provides the entropy required to uniquely identify the issuing consumer for the duration of any outstanding Interest-Data exchange. For example, a UUID, which is a random 128 bit quantity specified in <xref target="RFC4122"/>, or a hash value signed by the consumer's secret key (see <xref target="signed_RNP"/>) can be used for the value of the Reflexive Interest Name Segment TLV. Any scheme that meets the randomness and entropy requirements can suffice, but the consumer SHOULD choose a different random value for the value of the Reflexive Interest Name Segment TLV it constructs because:</t>
+	<t>	The value of the Reflexive Interest Name Segment TLV is assigned by the consumer, which provides the entropy required to uniquely identify the issuing consumer for the duration of any outstanding Interest-Data exchange. For example, a UUID, which is a random 128 bit quantity specified in <xref target="RFC4122"/>, or a hash value signed by the consumer's secret key (see <xref target="signed_RNP"/>) can be used for the value of the Reflexive Interest Name Segment TLV. Any scheme that meets the randomness and entropy requirements can suffice, but the consumer SHOULD choose a different random value for the value of the Reflexive Interest Name Segment TLV it constructs because:</t>
 	
 	<ol>
 	  <li>If there is insufficient randomness, a name collision on
@@ -642,8 +633,7 @@ ccnx:/RNP1/Chunk=2  EndChunkNumber=2
 	for the case of a single Reflexive Name Prefix TLV at the expense
 	of those with more than one.
 	</t>
-	<t><strong>[HA]</strong> IMO, above statement is not sufficient as "SHOULD NOT" does not prohibit for some implementations to implement multiple RNPs for a single RI. It is necessary to clarify how to deal with or support multiple RNPs included in one TI. For example, if TI includes two RNPs, the following cases can be considered; (1) one RI including two RNPs is invoked, and (2) each RNP is sent one RI separately, meaning two RIs are invoked for two RNPs. For (1), RD must include two data objects, while it is a different concept from the regular CCNx (and NDN, maybe); therefore (1) is not suitable. On the other hand, for (2), two RDs are sent for each data object. It requires that two RI-PIT entries must be maintained when TI is received, but it may be able to work properly. So, my recommendation is that the following sentence should be appended at the above statemtents: "Note that if multiple RNP TLVs are included in one TI, each RNP TLV MUST be separately formed and independently sent in one RI."
-	</t>
+	<aside><t><strong>[HA]</strong> IMO, above statement is not sufficient as "SHOULD NOT" does not prohibit for some implementations to implement multiple RNPs for a single RI. It is necessary to clarify how to deal with or support multiple RNPs included in one TI. For example, if TI includes two RNPs, the following cases can be considered; (1) one RI including two RNPs is invoked, and (2) each RNP is sent one RI separately, meaning two RIs are invoked for two RNPs. For (1), RD must include two data objects, while it is a different concept from the regular CCNx (and NDN, maybe); therefore (1) is not suitable. On the other hand, for (2), two RDs are sent for each data object. It requires that two RI-PIT entries must be maintained when TI is received, but it may be able to work properly. So, my recommendation is that the following sentence should be appended at the above statemtents: "Note that if multiple RNP TLVs are included in one TI, each RNP TLV MUST be separately formed and independently sent in one RI."</t></aside>
 
 	<t>
 	A producer, upon receiving an Interest with one or more
@@ -663,26 +653,13 @@ ccnx:/RNP1/Chunk=2  EndChunkNumber=2
 
 	<section anchor="signed_RNP"><name>Signed RNP</name>
 		<t>Signed RNP validates that it is the name signed by the consumer's secret key. It does not only guarantee the uniqueness of RNP, but also provides the secure schema as it can be validated whether the RNP is securely created by the legitimate consumer. More detail explanation will be TODO.</t>
-
-		<t></t>
-
-	    <figure>
-        <artwork align="left"><![CDATA[
-ccnx:/RNP1/Chunk=0 ...
-ccnx:/RNP1/Chunk=1 EndChunkNumber=2
-ccnx:/RNP1/Chunk=2 EndChunkNumber=2
-]]></artwork>
- 	    </figure>
- 	    
- 	   	<figure>
-        <artwork align="left"><![CDATA[
-ccnx:/RNP1/Alice/video.mp4/Chunk=0 ...
-ccnx:/RNP1/Alice/video.mp4/Chunk=1 EndChunkNumber=2
-ccnx:/RNP1/Alice/video.mp4/Chunk=2 EndChunkNumber=2
-]]></artwork>
- 	    </figure>
 		
-		<t><strong>[HA]</strong>I will complete this section later.</t>
+		<aside><t><strong>[HA]</strong>I will complete this section later.</t></aside>		
+
+		<aside><t><strong>[DO]</strong>signed stuff in Interests inflates interest message size, which is a major thing we are trying to avoid by inventing reflexive forwarding. also...</t></aside>
+
+		<aside><t><strong>[DO]</strong>Doesn't this require that the producer have the consumer's public key in its possession? In fact, how does it figure out who the consumer is in the first place? An important use case for reflexive forwarding in the first place is to use RI/RD exchanges to do key bootstrapping. If the producer already has the consumer's public key why bother with the reflexive exchange in the first place?</t></aside>
+
 		</section>
 
 	</section>
@@ -761,10 +738,11 @@ ccnx:/RNP1/Alice/video.mp4/Chunk=2 EndChunkNumber=2
     	It has separate code paths for minimal forwarder operations and those needed by high-performance forwarders as is
     	further discussed in <xref target="PIT-sharding"/>.</t>
     	
-			<section><name>Processing of a Trigger Interest containing a Reflexive Name Prefix TLV</name>
-			<sourcecode type="pseudocode">
+	<section><name>Processing of a Trigger Interest containing a Reflexive Name Prefix TLV</name>
+		<sourcecode type="pseudocode">
 Create PIT entry for Interest;
-Optionally create a dummy PIT entry for any potential Reflexive Interests expectd to math the RNP (or RNPs) in the Trigger Interest;
+Optionally create a dummy PIT entry for any potential Reflexive Interests 
+     expected to match the RNP (or RNPs) in the Trigger Interest;
 Forward Interest upstream;
 			</sourcecode>
 			</section>
@@ -774,10 +752,13 @@ Forward Interest upstream;
 Use RNP of Interest's Name TLV to lookup original Interest PIT entry;
 
 IF PIT entry of original Interest not is found
-    Issue an Interest Return with "No Route" error back to the producer;
+    Issue an Interest Return with "No Route" error 
+         back to the producer;
     RETURN;
 ELSE
-    Create PIT entry for Reflexive Interest (or optionally modify the dummy RI PIT entry that was created together with the Trigger Interest PIT entry);
+    Create PIT entry for Reflexive Interest 
+    (or optionally modify the dummy RI PIT entry that was created together 
+     with the Trigger Interest PIT entry);
     Process as a normal Interest;
 			</sourcecode>
 			</section>
@@ -1068,7 +1049,8 @@ ELSE
 	<name>Forwarder implementation considerations</name>
 <!--
 	<t><strong>[HA]</strong> I only mentioned NDN here (means, I removed CCNx from this section), because CCNx allows exact matching in PIT and hence there is no PIT shard happened in CCNx.</t> -->
-<t><strong>[HA]</strong> IMO, this section should be in Appendix as it's too implementation oriented. Moreover, almost all descriptions are not directly related to Reflexive forwarding, which means, there is no relation between Reflexive forwarding and PIT token used for high speed router implementations. (BTW, "high speed router" is too ambiguous. We presented a CCNx router implementation on FPGA ("CCNx Router on FPGA Accelerator Achieving Predictable Performance", Proc. ACM ICN 2023), which is also a very high speed router, but ours implemented the different ways (e.g., no PIT token in our implementation).)</t>
+<aside><t><strong>[HA]</strong> IMO, this section should be in Appendix as it's too implementation oriented. Moreover, almost all descriptions are not directly related to Reflexive forwarding, which means, there is no relation between Reflexive forwarding and PIT token used for high speed router implementations. (BTW, "high speed router" is too ambiguous. We presented a CCNx router implementation on FPGA ("CCNx Router on FPGA Accelerator Achieving Predictable Performance", Proc. ACM ICN 2023), which is also a very high speed router, but ours implemented the different ways (e.g., no PIT token in our implementation).)</t></aside>
+<aside><t><strong>[DO]</strong>Is the rest of this ok now that the PIT Token stuff is gone?</t></aside>
 
 	<section>
 	<name>Interactions with Input Processing of Interest and Data packets</name>
@@ -1519,13 +1501,7 @@ ELSE
       forwarding resources appropriately relative to other
       Interests.</t>
       </section> 
-      
-      <section><name>Potential Vulnerabilities from the use of PIT Tokens</name>
-      <t>By including PIT Tokens in the CCNx or NDN protocol, an attacker has the opportunity to manipulate these values by either replacement or elision. So far we do not have enough experimental data nor formal security analysis to assess whether useful attacks against the protocol via the PIT Tokens can be mounted. The fields are carried differently in CCNx and NDN, but in both cases they are outside the cryptographic integrity envelope and not encrypted for confidentiality as part of the base protocols.</t>
-      
-      <t>For both cases however, the potential vulnerabilities can be foiled, at least for point-to-point communication over an L2 hop, by employing either link-layer encryption (in the case of CCNx), or by encrypting the NDNLPv2 protocol, which carries these fields for NDN.</t>
-      </section>
-      
+       
       <section><name>Privacy Considerations</name>
       <t>ICN architectures like CCNx and NDN provide a rich tapestry
       of interesting privacy issues, which have been extensively
@@ -1585,7 +1561,7 @@ ELSE
 	<!--		<xi:include "reference.I-D.irtf.icnrg.mapme.xml"?> -->
 	<xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.irtf-icnrg-flic.xml"/>
 	<xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.irtf-icnrg-pathsteering.xml"/>
-	<!-- ><xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.mosko-icnrg-ccnxchunking.xml"/> -->
+	<xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.mosko-icnrg-ccnxchunking.xml"/>
 	
 	<reference anchor="Krol2018" target="https://conferences.sigcomm.org/acm-icn/2018/proceedings/icn18-final9.pdf">
 	  <front>
@@ -1802,7 +1778,18 @@ ELSE
 	  </front>
 	  <seriesInfo name="DOI" value="https://doi.org/10.1145/3517212.3558089"/>
 	</reference>
-	    
+	
+	<reference anchor="Asaeda2019" target="https://www.jstage.jst.go.jp/article/transcom/E102.B/9/E102.B_2018EII0001/_article">
+	  <front>
+		<title>Cefore: Software Platform Enabling Content-Centric Networking and Beyond</title>
+		<author surname="Asaeda" initials="H."/>
+		<author surname="Ooka" initials="A."/>
+		<author surname="Matsuzono" initials="K."/>
+		<author surname="Li" initials="R."/>
+		<date year="2019"/>
+	  </front>
+	  <seriesInfo name="DOI" value="https://doi.org/10.1587/transcom.2018EII0001"/>
+	</reference>  
 
   </references>
 
