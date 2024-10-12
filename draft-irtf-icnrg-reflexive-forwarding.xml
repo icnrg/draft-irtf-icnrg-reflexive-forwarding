@@ -502,7 +502,7 @@
 	
 	<section anchor="CCNx_spec"><name>CCNx Specific Design</name>
 
-	<t>The overall interaction flow for reflexive forwarding in CCNx, using the implementations approach in <xref target="Asaeda2019">CeFore</xref>, is described below and illustrated in <xref target="overall-message-flow-ccnx"/>.</t>
+	<t>The overall interaction flow for reflexive forwarding in CCNx, using the implementations approach in <xref target="Asaeda2019">Cefore</xref>, is described below and illustrated in <xref target="overall-message-flow-ccnx"/>.</t>
 		
 	<t>Forwarder operation for CCNx is slightly changed in the following respects when supporting Reflexive Interests. When a forwarder receives TI that will be sent toward the producer, the forwarder creates two PIT entries; (1) a regular PIT entry for TI (TI-PIT, hereafter) that consists of the name of the Name TLV in TI, downstream face (i.e., face from which the TI is received), and upstream face(s) (i.e., face(s) from which the TI is/are forwarded), and (2) a tentative PIT entry for RI (RI-PIT(dummy), hereafter) that includes Reflexive Name Prefix (RNP), downstream face (i.e., face(s) from which the TI is/are forwarded), and upstream face (i.e., face from which the TI is received). RI-PIT(dummy) is created whenever TI is received. However, RI-PIT(dummy) is not used for packet forwarding; it is only referred to create the actual PIT entry for RI (RI-PIT, hereafter). When a forwarder receives RI, it creates RI-PIT by copying the downstream and upstream faces from the RI-PIT(dummy) with the same RNP.</t>
 
@@ -1557,10 +1557,9 @@ ELSE
 	<xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.6337.xml"/>
 	<xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8446.xml"/>
 	<xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8793.xml"/>
-	
+	<xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.9531.xml"/>	
 	<!--		<xi:include "reference.I-D.irtf.icnrg.mapme.xml"?> -->
 	<xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.irtf-icnrg-flic.xml"/>
-	<xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.irtf-icnrg-pathsteering.xml"/>
 	<xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.mosko-icnrg-ccnxchunking.xml"/>
 	
 	<reference anchor="Krol2018" target="https://conferences.sigcomm.org/acm-icn/2018/proceedings/icn18-final9.pdf">
@@ -1859,7 +1858,7 @@ ELSE
  	
  	<section anchor="path-steering-based-design"><name>Reflexive forwarding using Path Steering</name>
  		<t>We also considered leveraging Path Steering <xref
-	    target="I-D.irtf-icnrg-pathsteering"/> Path
+	    target="RFC9531"/> Path
 	    Labels that inform the forwarder at each hop which
 	    outgoing face to use for for forwarding the Reflexive
 	    Interest. In this approach, the producer, when creating and issuing the
@@ -1893,8 +1892,7 @@ ELSE
 	same data structure, but for "reverse discovery", i.e., in the
 	upstream direction from consumer to producer.
       </t>
-	<t> From an operational perspective the path-steering approach does not exhibit good properties with respect to backward compatibility. Without a complete path of forwarders between consumer and producer that support path steering, reflexive interests cannot reach the intended consumer. While we might envision a way to	steer a subsequent Interest onto a working path as proposed in <xref target="I-D.irtf-icnrg-pathsteering"/>, there is no
-	capability to force Interest routing away from an otherwise	working path not supporting the reflexive name TLV.</t>
+	<t> From an operational perspective the path-steering approach does not exhibit good properties with respect to backward compatibility. Without a complete path of forwarders between consumer and producer that support path steering, reflexive interests cannot reach the intended consumer. While we might envision a way to	steer a subsequent Interest onto a working path as proposed in <xref target="RFC9531"/>, there is no	capability to force Interest routing away from an otherwise	working path not supporting the reflexive name TLV.</t>
 	</section>
  	
  </section>  
