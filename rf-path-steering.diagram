@@ -1,6 +1,6 @@
 object Consumer Forwarder Producer
 
-note right of Consumer: Create I1 with additional,\nemptyPath Label\ndata structure\nfor reverse discovery
+note right of Consumer: Create I1 with\nadditional empty Path Label\ndata structure for\nreverse discovery
 Consumer->Forwarder: I1 with Path Label\nand RNP TLV
 note right of Forwarder: Add path label\nfor adjacency\nto Consumer
 Forwarder->Producer: I1

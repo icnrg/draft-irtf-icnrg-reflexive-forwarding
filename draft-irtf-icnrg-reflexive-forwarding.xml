@@ -5,7 +5,7 @@
    	xmlns:xi="http://www.w3.org/2001/XInclude"
    	version="3"
     ipr="trust200902"
-    docName="draft-irtf-icnrg-reflexive-forwarding-01"
+    docName="draft-irtf-icnrg-reflexive-forwarding-00"
     category="exp"
     submissionType="IRTF"
     updates="8569, 8609"
@@ -20,7 +20,7 @@
     Reflexive Forwarding for CCNx and NDN Protocols</title>
     <seriesInfo 
     	name="Internet-Draft" 
-    	value="draft-irtf-icnrg-reflexive-forwarding-01"/>
+    	value="draft-irtf-icnrg-reflexive-forwarding-00"/>
 
     <!-- add "role="editor"" below for the editors if appropriate -->
     <author fullname="Dave Oran" initials="D." surname="Oran">
@@ -1418,9 +1418,7 @@ ELSE
 	<t>As per <xref target="RFC8126" />, this section makes an assignment in one existing registry in the "Content-Centric Networking (CCNx)" registry group. The registration procedure is "RFC Required", which requires only that this document be published as an RFC.</t>
 
 	<section anchor="sec.iana" title="CCNx Name Segment Type Registry">
-	<t>As shown in <xref target='CCNx-encoding' />, this document defines one message type, T_REFLEXIVE_NAME, whose suggested value is %x0005.</t>
-	
-	<aside><t><strong>[DO]</strong>I don't think we decided if we actually need a new CCNx message type for a reflexive interest or if just the presence of the RNP name segment as the first segment of the name is sufficient to indicate a reflexive interest. Perhaps mor discussion of this - I don't see how the processing of a reflexive interest by a forwarder is all that different from any old interest other than the fact that the PIT is pre-populated with the outgoing faces needed to forward it.</t></aside>
+	<t>As shown in <xref target='CCNx-encoding' />, this document defines one name segment type, T_REFLEXIVE_NAME, whose suggested value is %x0005.</t>
 	
 	</section>
 
