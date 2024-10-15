@@ -1,4 +1,4 @@
-﻿
+
 
 
 
@@ -590,26 +590,26 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
    downstream and upstream faces from the RI-PIT(dummy) with the same
    RNP.
 
-+-----------+         +-----------+                 +-----------+
-| Consumer  |         | Forwarder |                 | Producer  |
-+-----------+         +-----------+                 +-----------+
-      |                     |                             |
-      | TI1                 |                             |
-      |-------------------->|                             |
-      | ------------------\ |                             |
-      | | Record fullname |-|                             |
-      | | in TI-PIT(TI1)  | |                             |
-      | |-----------------| |                             |
-      |                     |                             |
-      |                     | TI1                         |
-      |                     |---------------------------->|
-      |                     | ---------------------\      |
-      |                     |-| Add RNP to         |      |
-      |                     | | RI-PIT(dummy)(RI1) |      |
-      |                     | |--------------------|      |
-      |                     |                             | ------------\
-      |                     |                             |-| Check     |
-      |                     |                             | | prefix,   |
++-----------+              +-----------+                 +-----------+
+| Consumer  |              | Forwarder |                 | Producer  |
++-----------+              +-----------+                 +-----------+
+      |                          |                             |
+      | TI                       |                             |
+      |------------------------->|                             |
+      |      +-----------------\ |                             |
+      |      | Record fullname |-|                             |
+      |      | in TI-PIT(TI)   | |                             |
+      |      +-----------------+ |                             |
+      |                          | +--------------------\      |
+      |                          |-| Add RNP to         |      |
+      |                          | | RI-PIT(dummy)(RI)  |      |
+      |                          | +--------------------+      |
+      |                          |                             |
+      |                          | TI                          |
+      |                          |---------------------------->|
+      |                          |                             | +-----------\
+      |                          |                             |-| Check     |
+      |                          |                             | | prefix,   |
 
 
 
@@ -618,54 +618,54 @@ Oran, et al.              Expires 18 April 2025                [Page 11]
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
-      |                     |                             | | creating  |
-      |                     |                             | | Reflexive |
-      |                     |                             | | Interest  |
-      |                     |                             | | state     |
-      |                     |                             | |-----------|
-      |                     |                             |
-      |                     |                         RI1 |
-      |                     |<----------------------------|
-      |                     | ----------------------\     |
-      |                     |-| check match         |     |
-      |                     | | of RI-PIT(dummy)    |     |
-      |                     | | create RI-PIT(RI1), |     |
-      |                     | | forward RI1         |     |
-      |                     | |---------------------|     |
-      |                     |                             |
-      |                 RI1 |                             |
-      |<--------------------|                             |
-      |                     |                             |
-      | RD1 obj             |                             |
-      |-------------------->|                             |
-      | ------------------\ |                             |
-      | | consume PIT(I2) |-|                             |
-      | | entry           | |                             |
-      | | and             | |                             |
-      | | forward RD1     | |                             |
-      | |-----------------| |                             |
-      |                     | ----------------------\     |
-      |                     |-| satisfy RI-PIT(RI1) |     |
-      |                     | |---------------------|     |
-      |                     |                             |
-      |                     | RD1                         |
-      |                     |---------------------------->|
-      |                     |                             | -------------\
-      |                     |                             |-| all        |
-      |                     |                             | | parameters |
-      |                     |                             | | received,  |
-      |                     |                             | | answer TI1 |
-      |                     |                             | |------------|
-      |                     |                             |
-      |                     |                  TD1 object |
-      |                     |<----------------------------|
-      |-------------------\ |                             |
-      || satisfy PIT(I1), |-|                             |
-      || forward TD1      | |                             |
-      ||------------------| |                             |
-      |                     |                             |
-      |                 TD1 |                             |
-      |<--------------------|                             |
+      |                          |                             | | creating  |
+      |                          |                             | | Reflexive |
+      |                          |                             | | Interest  |
+      |                          |                             | | state     |
+      |                          |                             | +-----------+
+      |                          |                             |
+      |                          |                          RI |
+      |                          |<----------------------------|
+      |                          | +--------------------\      |
+      |                          |-| check RNP match    |      |
+      |                          | | of RI-PIT(dummy),  |      |
+      |                          | | create RI-PIT(RI), |      |
+      |                          | | forward RI         |      |
+      |                          | +--------------------+      |
+      |                          |                             |
+      |                       RI |                             |
+      |<-------------------------|                             |
+      |                          |                             |
+      |                          |                             |
+      | RD                       |                             |
+      |------------------------->|                             |
+      |                          | +---------------------\     |
+      |                          |-| satisfy RI-PIT(RI), |     |
+      |                          | | forward RD via      |     |
+      |                          | | RI-PIT(RI)          |     |
+      |                          | +---------------------+     |
+      |                          |                             |
+      |                          | RD                          |
+      |                          |---------------------------->|
+      |                          | +---------------------\     |
+      |                          |-| remove RI-PIT(RI)   |     |
+      |                          | +---------------------+     |
+      .                          .                             .
+      .                          .                             .
+       Chunks denoted by a serial counter incrementing by 1 for
+       each contiguous chunk may be retrieved by multiple RIs
+       and provided with RDs from the Consumer
+      .                          .                             .
+      .                          .                             .
+      |                          |                             | +------------\
+      |                          |                             |-| all        |
+      |                          |                             | | parameters |
+      |                          |                             | | received,  |
+      |                          |                             | | answer TI  |
+      |                          |                             | +------------+
+      |                          |                             |
+      |                          |                          TD |
+      |                          |<----------------------------|
 
 
 
@@ -674,7 +674,14 @@ Oran, et al.              Expires 18 April 2025                [Page 12]
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
-      |                     |                             |
+      |     +------------------\ |                             |
+      |     | satisfy PIT(TI), |-|                             |
+      |     | forward TD       | |                             |
+      |     +------------------+ |                             |
+      |                          |                             |
+      |                       TD |                             |
+      |<-------------------------|                             |
+      |                          |                             |
     Legend:
     TI: Trigger Interest containing the Reflexive Name Prefix TLV
     RI: Reflexive Interest with Reflexive Name Prefix Segment
@@ -714,13 +721,6 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
    corresponding RD is forwarded through the downstream face, while RI-
    PIT(dummy) is erased when the RI-PIT(dummy) lifetime expires or
    Trigger Data (TD) is received at the forwarder.
-
-
-
-
-
-
-
 
 
 

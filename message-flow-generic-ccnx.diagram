@@ -1,17 +1,16 @@
 object Consumer Forwarder Producer
-Consumer->Forwarder: TI1
-note left of Forwarder: Record fullname\nin TI-PIT(TI1)
+Consumer->Forwarder: TI
+note left of Forwarder: Record fullname\nin TI-PIT(TI)
 Forwarder->Producer: TI1
-note right of Forwarder: Add RNP to\nRI-PIT(dummy)(RI1)
+note right of Forwarder: Add RNP to\nRI-PIT(dummy)(RI)
 note right of Producer: Check\nprefix,\ncreating\nReflexive\nInterest\nstate
-Producer->Forwarder: RI1
-note right of Forwarder: check match\n of RI-PIT(dummy)\ncreate RI-PIT(RI1),\nforward RI1
-Forwarder->Consumer: RI1
-Consumer->Forwarder: RD1 obj
-note left of Forwarder: consume PIT(I2)\nentry\nand\nforward RD1
-note right of Forwarder: satisfy RI-PIT(RI1)
-Forwarder->Producer: RD1
-note right of Producer: all\n parameters\nreceived,\nanswer TI1
-Producer->Forwarder: TD1 object
-note left of Forwarder: satisfy PIT(I1),\nforward TD1
-Forwarder->Consumer: TD1
+Producer->Forwarder: RI
+note right of Forwarder: check match\n of RI-PIT(dummy)\ncreate RI-PIT(RI),\nforward RI
+Forwarder->Consumer: RI
+Consumer->Forwarder: RD obj
+note right of Forwarder: satisfy RI-PIT(RI),\nforward RD via\nRI-PIT(RI) 
+Forwarder->Producer: RD
+note right of Producer: all\n parameters\nreceived,\nanswer TI
+Producer->Forwarder: TD object
+note left of Forwarder: satisfy PIT(I1),\nforward TD
+Forwarder->Consumer: TD

@@ -2,7 +2,7 @@
 TD=./text-diagram/text-diagram/text-diagram.js
 NODE=/usr/local/bin/node
 LADDER=$(NODE) ladder.js
-DIAGRAMS=message-flow-generic.txt message-flow-generic-ccnx.txt rice.txt rice2.txt phonehome.txt rf-path-steering.txt
+DIAGRAMS=message-flow-generic.txt rice.txt rice2.txt phonehome.txt rf-path-steering.txt
 
 all: draft-irtf-icnrg-reflexive-forwarding.txt draft-irtf-icnrg-reflexive-forwarding.html draft-irtf-icnrg-reflexive-forwarding.pdf
 
