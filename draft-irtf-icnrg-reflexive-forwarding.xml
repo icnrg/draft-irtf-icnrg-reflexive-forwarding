@@ -5,7 +5,7 @@
    	xmlns:xi="http://www.w3.org/2001/XInclude"
    	version="3"
     ipr="trust200902"
-    docName="draft-irtf-icnrg-reflexive-forwarding-01"
+    docName="draft-irtf-icnrg-reflexive-forwarding-00"
     category="exp"
     submissionType="IRTF"
     updates="8569, 8609"
@@ -20,7 +20,7 @@
     Reflexive Forwarding for CCNx and NDN Protocols</title>
     <seriesInfo 
     	name="Internet-Draft" 
-    	value="draft-irtf-icnrg-reflexive-forwarding-01"/>
+    	value="draft-irtf-icnrg-reflexive-forwarding-00"/>
 
     <!-- add "role="editor"" below for the editors if appropriate -->
     <author fullname="Dave Oran" initials="D." surname="Oran">
