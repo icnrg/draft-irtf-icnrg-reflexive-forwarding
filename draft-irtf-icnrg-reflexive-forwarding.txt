@@ -12,7 +12,7 @@ Expires: 19 April 2025                                         H. Asaeda
 
 
             Reflexive Forwarding for CCNx and NDN Protocols
-                draft-irtf-icnrg-reflexive-forwarding-01
+                draft-irtf-icnrg-reflexive-forwarding-00
 
 Abstract
 
