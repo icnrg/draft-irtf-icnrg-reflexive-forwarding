@@ -604,21 +604,13 @@
 	<t>The reason to maintain RI-PIT(dummy) and RI-PIT for reflexive forwarding is that there maybe the case where <xref target="I-D.mosko-icnrg-ccnxchunking">multiple chunks</xref> are requested using a single Reflexive Interest. Followings are the examples of the names without/with chunk information enclosed in TI and RIs:</t>
 	<figure><name>Responses without/with multiple chunks using Reflexive Interests</name>
 	<artwork align="left"><![CDATA[
-TI: ccnx:/example.com/RNP1
-RI: ccnx:/RNP1
+TI: ccnx:/Name=example.com/RNP=RNP1
+RI: ccnx:/RNP=RNP1
 
-TI: ccnx:/example.com/RNP1/Alice/note.txt
-RI: ccnx:/RNP1/Alice/note.txt
-
-TI: ccnx:/example.com/RNP1
-RI_1: ccnx:/RNP1/Chunk=0  ---
-RI_2: ccnx:/RNP1/Chunk=1  EndChunkNumber=2
-RI_3: ccnx:/RNP1/Chunk=2  EndChunkNumber=2
-
-TI: ccnx:/example.com/RNP1/Alice/video.mp4
-RI_1: ccnx:/RNP1/Alice/video.mp4/Chunk=0  ---
-RI_2: ccnx:/RNP1/Alice/video.mp4/Chunk=1  EndChunkNumber=2
-RI_3: ccnx:/RNP1/Alice/video.mp4/Chunk=2  EndChunkNumber=2
+TI: ccnx:/Name=example.com/RNP=RNP1
+RI_1: ccnx:/RNP=RNP1/Chunk=0  ---
+RI_2: ccnx:/RNP=RNP1/Chunk=1  EndChunkNumber=2
+RI_3: ccnx:/RNP=RNP1/Chunk=2  EndChunkNumber=2
 	]]></artwork>
     </figure>
 
@@ -1273,9 +1265,7 @@ ELSE
       	same phenomenon occurs for the reflexive Name Prefix TLV. If
       	Interests with different reflexive name prefix TLVs collide,
       	the forwarder MUST NOT aggregate these Interest messages and
-      	instead MUST create a separate PIT entry for each. This in
-      	turn means that a different Forward PIT-Token (FPT) will be
-      	placed in the individual forwarded Interests.</t>
+      	instead MUST create a separate PIT entry for each.</t>
       	
       	<t>Forwarders supporting multi-path forwarding may of course
       	exploit this capability for Interests with identical reflexive
@@ -1291,10 +1281,7 @@ ELSE
 	Interest, decide to either do single or multi-path forwarding
 	of that reflexive Interest. If sent multi-path in parallel,
 	these also will reconverge on the inverse path and get
-	aggregated. The inclusion of the Forward PIT-Token (FPT) in
-	the forwarded Interest is unaffected by multi-path since it is
-	only used on returning Data messages or Reflexive Interests to
-	access the correct PIT entry.</t>
+	aggregated.</t>
 
 	<t>For multi-destination, reflexive Interests might get issued
 	by multiple producers, but they will carry the same reflexive
@@ -1373,7 +1360,7 @@ ELSE
 	and backward compatibility consequences. The most important of
 	these is that correct operation of the scheme requires an
 	unbroken chain of forwarders between the consumer and the
-	desired producer that support the Reflexive Name Prefix TLV, the Forward and Backward PIT-Token TLVs and the
+	desired producer that support the Reflexive Name Prefix TLV and the
 	corresponding forwarder capabilities specified in <xref
 	target="forwarder-operation"/>. When this invariant is not
 	satisfied, some means is necessary to detect and hopefully
@@ -1399,7 +1386,7 @@ ELSE
 	to explicitly indicate the lack of compatability. Such
 	Interests would be rejected by forwarders not supporting these
 	protocol extensions. A consumer wishing to use the Reflexive
-	Name Prefix TLV together with Reverse PIT-Tokens, would use the higher protocol version on those
+	Name Prefix TLV would use the higher protocol version on those
 	Interest messages (but could of course continue to use the
 	current version number on other Interest messages). This is a
 	big hammer, but may be called for in this situation
