@@ -1855,9 +1855,10 @@ ELSE
 		<author surname="Ooka" initials="A."/>
 		<author surname="Matsuzono" initials="K."/>
 		<author surname="Li" initials="R."/>
-		<date year="2019"/>
+		<date month="September" year="2019"/>
 	  </front>
-	  <seriesInfo name="DOI" value="https://doi.org/10.1587/transcom.2018EII0001"/>
+	  <seriesInfo name="IEICE Transaction on Communications," value="Vol.E102-B, No.9"/>
+	  <seriesInfo name="DOI:" value="10.1587/transcom.2018EII0001"/>
 	</reference>
 
 	<reference anchor="Cefore" target="https://github.com/cefore/">
