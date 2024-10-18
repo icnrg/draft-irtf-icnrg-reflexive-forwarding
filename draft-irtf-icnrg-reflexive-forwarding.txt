@@ -6,9 +6,9 @@ ICNRG                                                            D. Oran
 Internet-Draft                       Network Systems Research and Design
 Updates: 8569, 8609 (if approved)                            D. Kutscher
 Intended status: Experimental                                  HKUST(GZ)
-Expires: 20 April 2025                                         H. Asaeda
+Expires: 21 April 2025                                         H. Asaeda
                                                                     NICT
-                                                         17 October 2024
+                                                         18 October 2024
 
 
             Reflexive Forwarding for CCNx and NDN Protocols
@@ -47,13 +47,13 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 20 April 2025.
+   This Internet-Draft will expire on 21 April 2025.
 
 
 
 
 
-Oran, et al.              Expires 20 April 2025                 [Page 1]
+Oran, et al.              Expires 21 April 2025                 [Page 1]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Oran, et al.              Expires 20 April 2025                 [Page 2]
+Oran, et al.              Expires 21 April 2025                 [Page 2]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -165,7 +165,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                 [Page 3]
+Oran, et al.              Expires 21 April 2025                 [Page 3]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -221,7 +221,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                 [Page 4]
+Oran, et al.              Expires 21 April 2025                 [Page 4]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -277,7 +277,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                 [Page 5]
+Oran, et al.              Expires 21 April 2025                 [Page 5]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -333,7 +333,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                 [Page 6]
+Oran, et al.              Expires 21 April 2025                 [Page 6]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -389,7 +389,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                 [Page 7]
+Oran, et al.              Expires 21 April 2025                 [Page 7]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -445,7 +445,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                 [Page 8]
+Oran, et al.              Expires 21 April 2025                 [Page 8]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -501,7 +501,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                 [Page 9]
+Oran, et al.              Expires 21 April 2025                 [Page 9]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -557,7 +557,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                [Page 10]
+Oran, et al.              Expires 21 April 2025                [Page 10]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -613,7 +613,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                [Page 11]
+Oran, et al.              Expires 21 April 2025                [Page 11]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -669,7 +669,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                [Page 12]
+Oran, et al.              Expires 21 April 2025                [Page 12]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -725,7 +725,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                [Page 13]
+Oran, et al.              Expires 21 April 2025                [Page 13]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -781,7 +781,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                [Page 14]
+Oran, et al.              Expires 21 April 2025                [Page 14]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -837,7 +837,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                [Page 15]
+Oran, et al.              Expires 21 April 2025                [Page 15]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -893,7 +893,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                [Page 16]
+Oran, et al.              Expires 21 April 2025                [Page 16]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -949,7 +949,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                [Page 17]
+Oran, et al.              Expires 21 April 2025                [Page 17]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -1005,7 +1005,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                [Page 18]
+Oran, et al.              Expires 21 April 2025                [Page 18]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -1061,7 +1061,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                [Page 19]
+Oran, et al.              Expires 21 April 2025                [Page 19]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -1117,7 +1117,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                [Page 20]
+Oran, et al.              Expires 21 April 2025                [Page 20]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -1173,7 +1173,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                [Page 21]
+Oran, et al.              Expires 21 April 2025                [Page 21]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -1229,7 +1229,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                [Page 22]
+Oran, et al.              Expires 21 April 2025                [Page 22]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -1285,7 +1285,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                [Page 23]
+Oran, et al.              Expires 21 April 2025                [Page 23]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -1341,7 +1341,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                [Page 24]
+Oran, et al.              Expires 21 April 2025                [Page 24]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -1397,7 +1397,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                [Page 25]
+Oran, et al.              Expires 21 April 2025                [Page 25]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -1453,7 +1453,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                [Page 26]
+Oran, et al.              Expires 21 April 2025                [Page 26]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -1509,7 +1509,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                [Page 27]
+Oran, et al.              Expires 21 April 2025                [Page 27]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -1565,7 +1565,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                [Page 28]
+Oran, et al.              Expires 21 April 2025                [Page 28]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -1621,7 +1621,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                [Page 29]
+Oran, et al.              Expires 21 April 2025                [Page 29]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -1677,7 +1677,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                [Page 30]
+Oran, et al.              Expires 21 April 2025                [Page 30]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -1733,7 +1733,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                [Page 31]
+Oran, et al.              Expires 21 April 2025                [Page 31]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -1789,7 +1789,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                [Page 32]
+Oran, et al.              Expires 21 April 2025                [Page 32]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -1845,7 +1845,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                [Page 33]
+Oran, et al.              Expires 21 April 2025                [Page 33]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -1901,7 +1901,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                [Page 34]
+Oran, et al.              Expires 21 April 2025                [Page 34]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -1957,7 +1957,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                [Page 35]
+Oran, et al.              Expires 21 April 2025                [Page 35]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -2013,7 +2013,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                [Page 36]
+Oran, et al.              Expires 21 April 2025                [Page 36]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -2069,7 +2069,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                [Page 37]
+Oran, et al.              Expires 21 April 2025                [Page 37]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -2125,7 +2125,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                [Page 38]
+Oran, et al.              Expires 21 April 2025                [Page 38]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -2181,7 +2181,7 @@ A.1.  Handling reflexive interests using dynamic FIB entries
 
 
 
-Oran, et al.              Expires 20 April 2025                [Page 39]
+Oran, et al.              Expires 21 April 2025                [Page 39]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -2237,7 +2237,7 @@ A.1.1.  Design complexities and performance issues with FIB-based design
 
 
 
-Oran, et al.              Expires 20 April 2025                [Page 40]
+Oran, et al.              Expires 21 April 2025                [Page 40]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -2293,7 +2293,7 @@ A.2.  Reflexive forwarding using Path Steering
 
 
 
-Oran, et al.              Expires 20 April 2025                [Page 41]
+Oran, et al.              Expires 21 April 2025                [Page 41]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -2349,7 +2349,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                [Page 42]
+Oran, et al.              Expires 21 April 2025                [Page 42]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -2405,7 +2405,7 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                [Page 43]
+Oran, et al.              Expires 21 April 2025                [Page 43]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -2461,7 +2461,7 @@ Authors' Addresses
 
 
 
-Oran, et al.              Expires 20 April 2025                [Page 44]
+Oran, et al.              Expires 21 April 2025                [Page 44]
 
 Internet-Draft          ICN Reflexive Forwarding            October 2024
 
@@ -2517,4 +2517,4 @@ Internet-Draft          ICN Reflexive Forwarding            October 2024
 
 
 
-Oran, et al.              Expires 20 April 2025                [Page 45]
+Oran, et al.              Expires 21 April 2025                [Page 45]
