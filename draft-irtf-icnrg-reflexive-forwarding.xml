@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="rfc2629.xslt" ?>
-
 <rfc
    	xmlns:xi="http://www.w3.org/2001/XInclude"
    	version="3"
@@ -1634,7 +1633,7 @@ ELSE
 	
 	<reference anchor="Krol2018" target="https://conferences.sigcomm.org/acm-icn/2018/proceedings/icn18-final9.pdf">
 	  <front>
-	    <title>RICE: Remote Method Invocation in ICN, in Proceedings of the 5th ACM Conference on Information-Centric Networking — ICN '18</title>
+	    <title>RICE: Remote Method Invocation in ICN</title>
 	    <author surname="Krol" initials="M."/>
 	    <author surname="Habak" initials="K."/>
 	    <author surname="Oran" initials="D."/>
@@ -1642,17 +1641,19 @@ ELSE
 	    <author surname="Psaras" initials="I."/>
 	    <date year="2018" month="September"/>
 	  </front>
+	  <seriesInfo name="Proc. the 5th ACM Conference on Information-Centric Networking" value="(ICN '18)"/>
 	  <seriesInfo name="DOI" value="10.1145/3267955.3267956"/>
 	</reference>
 
 	<reference anchor="Shi2020" target="https://dl.acm.org/doi/10.1145/3405656.3418715">
 		<front>
-			<title>NDN-DPDK: NDN Forwarding at 100 Gbps on Commodity Hardware, in Proceedings of the 7th ACM Conference on Information-Centric Networking — ICN '20</title>
+			<title>NDN-DPDK: NDN Forwarding at 100 Gbps on Commodity Hardware</title>
 			<author surname="Shi" initials="J."/>
 			<author surname="Pesavento" initials="D."/>
 			<author surname="Benmohamed" initials="L."/>
 			<date year="2020" month="September"/>
 		</front>
+		<seriesInfo name="Proc. the 7th ACM Conference on Information-Centric Networking" value="(ICN '20)"/>
 		<seriesInfo name="DOI" value="10.1145/3405656.3418715"/>
 	</reference>
 		
@@ -1674,19 +1675,20 @@ ELSE
 	
     	<reference anchor="Zhang2018" target="https://conferences.sigcomm.org/acm-icn/2018/proceedings/icn18-final23.pdf">
     	  <front>
-    	    <title>KITE: Producer Mobility Support in Named Data Networking, in Proceedings of the 5th ACM Conference on Information-Centric Networking — ICN '18</title>
+    	    <title>KITE: Producer Mobility Support in Named Data Networking</title>
     	    <author surname="Zhang" initials="Y" fullname="Yu Zhang"/>
     	    <author surname="Xia" initials="Z." fullname="Zhongda Xia"/>
     	    <author surname="Mastorakis" initials="S." fullname="Spyridon Mastorakis"/>
     	    <author surname="Zhang" initials="L" fullname="Lixia Zhang"/>
     	    <date year="2018" month="September"/>
     	  </front>
+		  <seriesInfo name="Proc. the 5th ACM Conference on Information-Centric Networking" value="(ICN '18)"/>
     	  <seriesInfo name="DOI" value="10.1145/3267955.3267959"/>
     	</reference>
 	
 	<reference anchor="Auge2018" target="https://ieeexplore.ieee.org/document/8267132">
 	  <front>
-	    <title>MAP-Me: Managing Anchor-Less Producer Mobility in Content-Centric Networks, in IEEE Transactions on Network, Volume 15, Issue 2</title>
+	    <title>MAP-Me: Managing Anchor-Less Producer Mobility in Content-Centric Networks</title>
 	    <author surname="Augé" initials="J." fullname="Jordan Augé" asciiSurname="Auge" asciiFullname="Jordan Auge"/>
 	    <author surname="Carofiglio" initials="G." fullname="Giovanna Carofiglio"/>
 	    <author initials="G." surname="Grassi"/>
@@ -1695,6 +1697,7 @@ ELSE
 	    <author initials="X." surname="Zeng"/>
 	    <date month="June" year="2018"/>
 	  </front>
+	  <seriesInfo name="IEEE Transactions on Network," value="Volume 15, Issue 2"/>
 	  <seriesInfo name="DOI" value="10.1109/TNSM.2018.2796720"/>
 	</reference>
 
@@ -1719,7 +1722,6 @@ ELSE
 	  <seriesInfo name="arXiv" value="1707.04738"/>
 	</reference>
 
-
 	<reference anchor="Moiseenko2014" target="https://dl.acm.org/doi/10.1145/2660129.2660152">
 	  <front>
 	    <title>Communication patterns for web interaction in named data networking</title>
@@ -1733,19 +1735,20 @@ ELSE
 
 	<reference anchor="Gasti2012" target="https://ieeexplore.ieee.org/document/6614127">
 	  <front>
-		<title>DoS and DDoS in Named Data Networking, in 22nd International Conference on Computer Communication and Networks (ICCCN)</title>
+		<title>DoS and DDoS in Named Data Networking</title>
 		<author surname="Gasti" initials="P." fullname="Paolo Gasti"/>
 		<author surname="Tsudik" initials="G." fullname="Gene Tsudik"/>
 		<author surname="Uzun" initials="Ersin" fullname="Ersin Uzun"/>
 		<author surname="Zhang" initials="L." fullname="Lixia Zhang"/>
 		<date month="August" year="2013"/>
 	  </front>
+	  <seriesInfo name="Proc. the 22nd International Conference on Computer Communication and Networks" value="(ICCCN)"/>
 	  <seriesInfo name="DOI" value="10.1109/ICCCN.2013.6614127"/>
 	</reference>
 	
 	<reference anchor="Baccelli2014" target="https://dl.acm.org/doi/abs/10.1145/2660129.2660144">
 	  <front>
-	  	<title>Information centric networking in the IoT: experiments with NDN in the wild, in ACM-ICN '14: Proceedings of the 1st ACM Conference on Information-Centric Networking</title>
+	  	<title>Information centric networking in the IoT: experiments with NDN in the wild</title>
 	  	<author surname="Baccelli" initials="E." fullname="Emmanuel Baccelli"/>
 	  	<author surname="Mehlis" initials="C." fullname="Christian Mehlis"/>
 	  	<author surname="Hahm" initials="O." fullname="Oliver Hahm"/>
@@ -1753,12 +1756,13 @@ ELSE
 	  	<author surname="Wählisch" initials="M." fullname="Matthias Wählisch" asciiSurname="Wahlisch" asciiFullname="Matthias Wahlisch"/>
 	  	<date month="September" year="2014"/>
 	  </front>
+	  <seriesInfo name="Proc. the 1st ACM Conference on Information-Centric Networking" value="(ICN '14)"/>
 	  <seriesInfo name="DOI" value="10.1145/2660129.2660144"/>
 	</reference>
 	
 	<reference anchor="Lindgren2016" target="https://ieeexplore.ieee.org/abstract/document/7444905">
 	  <front>
-	  	<title>Design choices for the IoT in Information-Centric Networks, in 13th IEEE Annual Consumer Communications and Networking Conference (CCNC)</title>
+	  	<title>Design choices for the IoT in Information-Centric Networks</title>
 	  	<author surname="Lindgren" initials="A." fullname="Anders Lindgren"/>
 	  	<author surname="Ben Abdessiem" initials="F." fullname="Fehmi Ben Abdesslem"/>
 	  	<author surname="Ahlgren" initials="B." fullname="Bengt Ahlgren"/>
@@ -1766,18 +1770,20 @@ ELSE
 	  	<author surname="Malik" initials="A.M." fullname="Adeel Mohammad Malik"/>
 	  	<date month="January" year="2016"/>
 	  </front>
+	  <seriesInfo name="Proc. the 13th IEEE Annual Consumer Communications and Networking Conference" value="(CCNC 2016)"/>
 	  <seriesInfo name="DOI" value="10.1109/CCNC.2016.7444905"/>
 	</reference>
 	
 	<reference anchor="Gundogan2018" target="https://dl.acm.org/doi/abs/10.1145/3267955.3269020">
 	  <front>
-	  	<title>HoPP: publish-subscribe for the constrained IoT, in ICN '18: Proceedings of the 5th ACM Conference on Information-Centric Networking</title>
+	  	<title>HoPP: publish-subscribe for the constrained IoT</title>
 	  	<author surname="Gündoğan" initials="C." fullname="Cenk Gündoğan" asciiFullname="Cenk Gundogan" asciiSurname="Gundogan"/>
 	  	<author surname="Kietzmann" initials="P." fullname="Peter Kietzmann"/>
 	  	<author surname="Schmidt" initials="T." fullname="Thomas Schmidt"/>
 	  	<author surname="Wählisch" initials="M." fullname="Matthias Wählisch" asciiSurname="Wahlisch" asciiFullname="Wahlisch"/>
 	  	<date month="September" year="2018"/>
 	  </front>
+	  <seriesInfo name="Proc. the 5th ACM Conference on Information-Centric Networking" value="(ICN '18)"/>
 	  <seriesInfo name="DOI" value="10.1145/3267955.3269020"/>
 	</reference>
 	
@@ -1806,24 +1812,26 @@ ELSE
 	
 	<reference anchor="Ghali2017" target="https://dl.acm.org/doi/abs/10.1145/3125719.3125723">
 	  <front>
-	  	<title>When encryption is not enough: privacy attacks in content-centric networking, in ICN '17: Proceedings of the 4th ACM Conference on Information-Centric Networking</title>
+	  	<title>When encryption is not enough: privacy attacks in content-centric networking</title>
 	  	<author surname="Tsudik" initials="G." fullname="Gene Tsudik"/>
 	  	<author surname="Ghali" initials="C." fullname="Cesar Ghali"/>
 	  	<author surname="Wood" initials="C." fullname="Christopher Wood"/>
 	  	<date month="September" year="2017"/>
 	  </front>
+	  <seriesInfo name="Proc. the 4th ACM Conference on Information-Centric Networking" value="(ICN '17)"/>
 	  <seriesInfo name="DOI" value="https://doi.org/10.1145/3125719.3125723"/>
 	</reference>
 	
 	<reference anchor="Arianfar2011" target="https://dl.acm.org/doi/10.1145/2018584.2018589">
 	  <front>
-	  	<title>On preserving privacy in content-oriented networks, in ICN '11: Proceedings of the ACM SIGCOMM workshop on Information-centric networking</title>
+	  	<title>On preserving privacy in content-oriented networks</title>
 	  	<author surname="Arianfar" initials="S." fullname="Somaya Arianfar"/>
 	  	<author surname="Koponen" initials="T." fullname="Teemu Koponen"/>
 	  	<author surname="Raghavan" initials="B." fullname="Barath Raghavan"/>
 	  	<author surname="Shenker" initials="S." fullname="Scott Shenker"/>
 	  	<date month="August" year="2011"/>
 	  </front>
+	  <seriesInfo name="Proc. ACM SIGCOMM workshop on Information-Centric Networking" value="(ICN '11)"/>
 	  <seriesInfo name="DOI" value="https://doi.org/10.1145/2018584.2018589"/>
 	</reference>
 	
@@ -1840,11 +1848,12 @@ ELSE
 	
 	<reference anchor="Kutscher2022" target="https://dl.acm.org/doi/10.1145/3517212.3558089">
 	  <front>
-		<title>RESTful information-centric networking: statement, in ICN '22: Proceedings of the 9th ACM Conference on Information-Centric Networking</title>
+		<title>RESTful information-centric networking: statement</title>
 		<author surname="Kutscher" initials="D."/>
 		<author surname="Oran" initials="D."/>
 		<date year="2022" month="September"/>
 	  </front>
+	  <seriesInfo name="Proc. the 9th ACM Conference on Information-Centric Networking" value="(ICN '22)"/>
 	  <seriesInfo name="DOI" value="https://doi.org/10.1145/3517212.3558089"/>
 	</reference>
 	
@@ -1857,15 +1866,14 @@ ELSE
 		<author surname="Li" initials="R."/>
 		<date month="September" year="2019"/>
 	  </front>
-	  <seriesInfo name="IEICE Transaction on Communications," value="Vol.E102-B, No.9"/>
-	  <seriesInfo name="DOI:" value="10.1587/transcom.2018EII0001"/>
+	  <seriesInfo name="IEICE Transactions on Communications," value="Vol.E102-B, No.9"/>
+	  <seriesInfo name="DOI" value="10.1587/transcom.2018EII0001"/>
 	</reference>
 
 	<reference anchor="Cefore" target="https://github.com/cefore/">
 	  <front>
 	    <title>Cefore</title>
 	    <author surname="Cefore development team"/>
-	    <date year="2019"/>
 	  </front>
 	</reference>
 
