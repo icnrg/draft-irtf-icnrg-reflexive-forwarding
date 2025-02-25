@@ -1528,7 +1528,7 @@ li > p:last-of-type:only-child {
             <p id="section-toc.1-1.14.1"><a href="#appendix-B" class="auto internal xref">Appendix B</a>.  <a href="#name-ndn-implementation" class="internal xref">NDN Implementation</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14.2.1">
-                <p id="section-toc.1-1.14.2.1.1"><a href="#appendix-B.1" class="auto internal xref">B.1</a>.  <a href="#name-reflexive-name-segment-2" class="internal xref">Reflexive Name Segment</a></p>
+                <p id="section-toc.1-1.14.2.1.1"><a href="#appendix-B.1" class="auto internal xref">B.1</a>.  <a href="#name-reflexive-interest-name-segm" class="internal xref">Reflexive Interest Name Segment</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14.2.2">
                 <p id="section-toc.1-1.14.2.2.1"><a href="#appendix-B.2" class="auto internal xref">B.2</a>.  <a href="#name-processing-reflexive-intere" class="internal xref">Processing Reflexive Interests&gt;</a></p>
@@ -1758,12 +1758,12 @@ li > p:last-of-type:only-child {
           <dd style="margin-left: 1.5em" id="section-2.1-2.4">An interest message sent from a consumer to a producer to trigger one or more Reflexive Interests sent by the producer.<a href="#section-2.1-2.4" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.1-2.5"><strong>Reflexive Name Segment</strong></dt>
+<dt id="section-2.1-2.5"><strong>Reflexive Interest Name Segment</strong></dt>
           <dd style="margin-left: 1.5em" id="section-2.1-2.6">A high-order typed name segment which identifies an Interest as being a Reflexive Interest instead of a normal Interest.<a href="#section-2.1-2.6" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
 <dt id="section-2.1-2.7"><strong>Reflexive Name Prefix (RNP) TLV</strong></dt>
-          <dd style="margin-left: 1.5em" id="section-2.1-2.8">An Interest message field indicating to a producer that it may fetch data from the sending consumer by issuing one or more corresponding Reflexive Interests. It consists of a Name prefix whose high-order (i.e. first) name segement is a Reflexive Name Segment as defined above.<a href="#section-2.1-2.8" class="pilcrow">¶</a>
+          <dd style="margin-left: 1.5em" id="section-2.1-2.8">An Interest message field indicating to a producer that it may fetch data from the sending consumer by issuing one or more corresponding Reflexive Interests. It consists of a Name prefix whose high-order (i.e. first) name segement is a Reflexive Interest Name Segment as defined above.<a href="#section-2.1-2.8" class="pilcrow">¶</a>
 </dd>
         <dd class="break"></dd>
 </dl>
@@ -1934,16 +1934,16 @@ li > p:last-of-type:only-child {
         <h3 id="name-interaction-flow-for-reflex">
 <a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-interaction-flow-for-reflex" class="section-name selfRef">Interaction Flow for Reflexive Forwarding: An Example</a>
         </h3>
-<p id="section-4.2-1">Based on the implementations approach in Cefore <span>[<a href="#Asaeda2019" class="cite xref">Asaeda2019</a>]</span><span>[<a href="#Cefore" class="cite xref">Cefore</a>]</span>, an example of the overall interaction flow for reflexive forwarding for CCNx is described below and illustrated in <a href="#overall-message-flow-ccnx" class="auto internal xref">Figure 2</a>.<a href="#section-4.2-1" class="pilcrow">¶</a></p>
+<p id="section-4.2-1">Based on the implementation approach in Cefore <span>[<a href="#Asaeda2019" class="cite xref">Asaeda2019</a>]</span><span>[<a href="#Cefore" class="cite xref">Cefore</a>]</span>, an example of the overall interaction flow for reflexive forwarding for CCNx is presented below and illustrated in <a href="#overall-message-flow-ccnx" class="auto internal xref">Figure 2</a>.<a href="#section-4.2-1" class="pilcrow">¶</a></p>
 <p id="section-4.2-2">Forwarder operation for CCNx is slightly changed in the following respects when supporting Reflexive Interests.<a href="#section-4.2-2" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-4.2-3.1">When a forwarder receives a Trigger Interest (TI) that will be sent toward the producer, in addition to the normal PIT entry created on receipt of a new Interest message, the forwarder creates a <em>tentative</em> PIT entry for the possible later receipt of a Reflexive Interest<a href="#section-4.2-3.1" class="pilcrow">¶</a>
 </li>
           <li class="normal" id="section-4.2-3.2"> This tentative PIT entry has the Reflexive Name Prefix as its Name field, and the incoming face list of the trigger interest as the potential output face(s) for any subsequent Reflexive Interest received.<a href="#section-4.2-3.2" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-4.2-3.3">On receipt of a Reflexive Interest matching the Reflexive Name Prefix of a tentative PIT entry, a full PIT entry is created from the tentative entry and normal PIT processing ensues (e.g. also including recording the incoming face(s) of the Reflexive Interest)<a href="#section-4.2-3.3" class="pilcrow">¶</a>
+          <li class="normal" id="section-4.2-3.3">On receipt of a Reflexive Interest matching the Reflexive Name Prefix of a tentative PIT entry, a full PIT entry is created from the tentative entry and normal PIT processing ensues (e.g. also including recording the incoming face(s) of the Reflexive Interest).<a href="#section-4.2-3.3" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-4.2-3.4">The Reflexive Interest is forwarded over the recorded outgoing faces from the PIT as opposed to examining the FIB to find an appropriate next hop for that Reflexive Interest.<a href="#section-4.2-3.4" class="pilcrow">¶</a>
+          <li class="normal" id="section-4.2-3.4">The Reflexive Interest is forwarded over the recorded outgoing face(s) from the PIT as opposed to examining the FIB to find an appropriate next hop for that Reflexive Interest.<a href="#section-4.2-3.4" class="pilcrow">¶</a>
 </li>
           </ul>
 <span id="name-overview-of-message-flow-in"></span><div id="overall-message-flow-ccnx">
@@ -2027,7 +2027,7 @@ li > p:last-of-type:only-child {
     |&lt;-----------------------|                          |
     |                        | +--------------------\   |
     |                        |-| remove             |   |
-    |                        | | RI-PIT(dummy)(RI)  |   |
+    |                        | | RI-PIT(tentative)(RI)  |
     |                        | | and TI-PIT(TI)     |   |
     |                        | +--------------------+   |
     |                        |                          |
@@ -2046,7 +2046,7 @@ li > p:last-of-type:only-child {
 </div>
 <p id="section-4.2-5">There are a number of reasons to maintain both a tentative RI-PIT and (possibly multiple RI-PIT entries for reflexive forwarding. Among them are:<a href="#section-4.2-5" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-4.2-6.1">there may be <span><a href="#I-D.mosko-icnrg-ccnxchunking" class="internal xref">multiple chunks</a> [<a href="#I-D.mosko-icnrg-ccnxchunking" class="cite xref">I-D.mosko-icnrg-ccnxchunking</a>]</span>  requested using a sequence of Reflexive Interests.<a href="#section-4.2-6.1" class="pilcrow">¶</a>
+<li class="normal" id="section-4.2-6.1">There may be <span><a href="#I-D.mosko-icnrg-ccnxchunking" class="internal xref">multiple chunks</a> [<a href="#I-D.mosko-icnrg-ccnxchunking" class="cite xref">I-D.mosko-icnrg-ccnxchunking</a>]</span>  requested using a sequence of Reflexive Interests.<a href="#section-4.2-6.1" class="pilcrow">¶</a>
 </li>
           <li class="normal" id="section-4.2-6.2">Multiple Reflexive Interests may be issued by the producer to fetch arguments in the remote invocation use case described in  <a href="#RMI" class="auto internal xref">Section 5.1</a>.<a href="#section-4.2-6.2" class="pilcrow">¶</a>
 </li>
@@ -2076,7 +2076,7 @@ RI_3: ccnx:/RNP=RNP1/Chunk=2  EndChunkNumber=2
 <a href="#section-4.3" class="section-number selfRef">4.3. </a><a href="#name-consumer-operation" class="section-name selfRef">Consumer Operation</a>
         </h3>
 <p id="section-4.3-1">
- A consumer that wants to employ Reflexive Forwarding
+ A consumer wishing to employ Reflexive Forwarding
  MUST include a Reflexive Name Prefix (RNP) TLV in the Interest, which causes it
  to be treated as a Trigger Interest by Forwarders and Producers. The producer can
  subsequently craft Reflexive Interests with names using the RNP as the first name segment. Upon receiving a Reflexive Interest (e.g. RI1 in 
@@ -2107,7 +2107,7 @@ RI_3: ccnx:/RNP=RNP1/Chunk=2  EndChunkNumber=2
  Interest message.<a href="#section-4.4-1" class="pilcrow">¶</a></p>
 <p id="section-4.4-2">
  We define a new typed name segment, identified by the <em>Reflexive Interest Name Segment</em>. The Reflexive Interest Name Segment MUST be the first (i.e. high order) name segment of any Reflexive Interest issued by a producer. In CCNx, the Reflexive Interest Name Segment type value will be registered in the IANA registry for <span>[<a href="#RFC8609" class="cite xref">RFC8609</a>]</span> when approved (see <a href="#IANA" class="auto internal xref">Section 9</a>).<a href="#section-4.4-2" class="pilcrow">¶</a></p>
-<p id="section-4.4-3"> The value of the Reflexive Interest Name Segment is assigned by the consumer. The selected value MUST provide sufficient entropy to uniquely identify the issuing consumer for the duration of any outstanding Interest-Data exchange. Any scheme that meets the randomness and entropy requirements can suffice, but the consumer SHOULD choose a different random value for the value of the Reflexive Interest Name Segment it constructs because:<a href="#section-4.4-3" class="pilcrow">¶</a></p>
+<p id="section-4.4-3"> The value of the Reflexive Interest Name Segment is assigned by the consumer. The selected value MUST provide sufficient entropy to uniquely identify the issuing consumer for the duration of any outstanding Interest-Data exchange. Any scheme that meets the randomness and entropy requirements can suffice, but the consumer SHOULD choose a different random value for the value of each Reflexive Interest Name Segment it constructs because:<a href="#section-4.4-3" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-4.4-4">
    <li id="section-4.4-4.1">If there is insufficient randomness, a name collision on
    the Reflexive Names could occur at any of the intermediate
@@ -2120,7 +2120,7 @@ RI_3: ccnx:/RNP=RNP1/Chunk=2  EndChunkNumber=2
    be used by surveillance adversaries for tracking purposes.<a href="#section-4.4-4.2" class="pilcrow">¶</a>
 </li>
         </ol>
-<p id="section-4.4-5">For example, a UUID, which is a randomly generated 128 bit quantity specified in <span>[<a href="#RFC9562" class="cite xref">RFC9562</a>]</span>
+<p id="section-4.4-5">A UUID, which is a randomly generated 128 bit quantity specified in <span>[<a href="#RFC9562" class="cite xref">RFC9562</a>]</span>
           
  can be used for the value of the Reflexive Interest Name Segment.<a href="#section-4.4-5" class="pilcrow">¶</a></p>
 <p id="section-4.4-6">
@@ -2197,39 +2197,40 @@ RI_3: ccnx:/RNP=RNP1/Chunk=2  EndChunkNumber=2
         <h3 id="name-forwarder-operation">
 <a href="#section-4.6" class="section-number selfRef">4.6. </a><a href="#name-forwarder-operation" class="section-name selfRef">Forwarder Operation</a>
         </h3>
-<ol start="1" type="1" class="normal type-1" id="section-4.6-1">
- <li id="section-4.6-1.1">
-            <p id="section-4.6-1.1.1">Upon receiving an Interest containing a Reflexive Name Prefix (RNP) TLV a forwarder MAY check its CS for a matching Data Object. if a match is found, the corresponding Data is returned and the Reflexive Interest is considered satisfied. If no match is found, proceed with the following steps.<a href="#section-4.6-1.1.1" class="pilcrow">¶</a></p>
-<p id="section-4.6-1.1.2"><strong>[HA]</strong> If Trigger Data is cached in CS, the next Trigger Interest whose name is the same of the previous one may not reach to the producer, and hence the producer cannot send Reflexive Interest to make the consumer push the data. It is not a wrong behavior because caching the TD implies that the pushed data (RD) was previously sent to the producer and it is not necessary to send the same RD to the producer again. However, it may be an unexpected behavior for the consumer because the consumer cannot push the data to the publisher until the caches in the network are perfectly expired/removed. This explanation (attention) must be clearly mentioned here or some place.<a href="#section-4.6-1.1.2" class="pilcrow">¶</a></p>
-<p id="section-4.6-1.1.3"><strong>Note:</strong> Given that reflexive interests initiate exchanges constrained by the Interest Lifetime of the enclosing Interest/Data exchange, the value of caching the Data responses in forwarders is for short-term recovery from lost packets as opposed to optimizing longer term caching gain. For this reason we avoid mandating or strongly recommending the CS check for reflexive interests.<a href="#section-4.6-1.1.3" class="pilcrow">¶</a></p>
+<p id="section-4.6-1">The forwarder performs the following operations.<a href="#section-4.6-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-4.6-2">
+ <li id="section-4.6-2.1">
+            <p id="section-4.6-2.1.1">Upon receiving an Interest containing a Reflexive Name Prefix (RNP) TLV a forwarder MAY check its CS for a matching Data Object. if a match is found, the corresponding Data is returned and the Reflexive Interest is considered satisfied. If no match is found, proceed with the following steps.<a href="#section-4.6-2.1.1" class="pilcrow">¶</a></p>
+<p id="section-4.6-2.1.2"><strong>[HA]</strong> If Trigger Data is cached in CS, the next Trigger Interest whose name is the same of the previous one may not reach to the producer, and hence the producer cannot send Reflexive Interest to make the consumer push the data. It is not a wrong behavior because caching the TD implies that the pushed data (RD) was previously sent to the producer and it is not necessary to send the same RD to the producer again. However, it may be an unexpected behavior for the consumer because the consumer cannot push the data to the publisher until the caches in the network are perfectly expired/removed. This explanation (attention) must be clearly mentioned here or some place.<a href="#section-4.6-2.1.2" class="pilcrow">¶</a></p>
+<p id="section-4.6-2.1.3"><strong>Note:</strong> Given that reflexive interests initiate exchanges constrained by the Interest Lifetime of the enclosing Interest/Data exchange, the value of caching the Data responses in forwarders is for short-term recovery from lost packets as opposed to optimizing longer term caching gain. For this reason we avoid mandating or strongly recommending the CS check for reflexive interests.<a href="#section-4.6-2.1.3" class="pilcrow">¶</a></p>
 </li>
-          <li id="section-4.6-1.2">
- The forwarder then MUST record the RNP as an element of the PIT entry for that Interest. (For interactions with Interest aggregation, also see <a href="#interest-aggregation" class="auto internal xref">Section 6.1.3</a>).<a href="#section-4.6-1.2" class="pilcrow">¶</a>
+          <li id="section-4.6-2.2">
+ The forwarder then MUST record the RNP as an element of the PIT entry for that Interest. (For interactions with Interest aggregation, also see <a href="#interest-aggregation" class="auto internal xref">Section 6.1.3</a>).<a href="#section-4.6-2.2" class="pilcrow">¶</a>
 </li>
-          <li id="section-4.6-1.3">
+          <li id="section-4.6-2.3">
  The forwarders MUST check that the high-order Name segment of the Interest is of
- type Reflexive Name Segment. If not, while this could strictly speaking be
+ type Reflexive Interest Name Segment. If not, while this could strictly speaking be
  considered an error, the forwarder SHOULD simply process the Interest as a normal
  non-reflexive Interest and skip the steps below. A match
  indicates that this is a Reflexive Interest corresponding to
  the original consumer to producer Interest, so execute the
- following steps.<a href="#section-4.6-1.3" class="pilcrow">¶</a>
+ following steps.<a href="#section-4.6-2.3" class="pilcrow">¶</a>
 </li>
-          <li id="section-4.6-1.4">
+          <li id="section-4.6-2.4">
  Create a new PIT entry for the Reflexive Interest (if
- resources are sufficient).<a href="#section-4.6-1.4" class="pilcrow">¶</a>
+ resources are sufficient).<a href="#section-4.6-2.4" class="pilcrow">¶</a>
 </li>
-          <li id="section-4.6-1.5">
+          <li id="section-4.6-2.5">
  Look up the ingress face from the originating Interest's PIT
- entry, forward the Reflexive Interest on this face.<a href="#section-4.6-1.5" class="pilcrow">¶</a>
+ entry, forward the Reflexive Interest on this face.<a href="#section-4.6-2.5" class="pilcrow">¶</a>
 </li>
         </ol>
-<p id="section-4.6-2">
+<p id="section-4.6-3">
  The PIT entry for the Reflexive Interest is consumed per regular
  Interest/Data message forwarding requirements. The PIT entry for
  the originating Interest (that communicated the Reflexive
  Interest Name) is also consumed by a final Data message from the
- producer to the original consumer.<a href="#section-4.6-2" class="pilcrow">¶</a></p>
+ producer to the original consumer.<a href="#section-4.6-3" class="pilcrow">¶</a></p>
 <div id="forwarder-pseudocode">
 <section id="section-4.6.1">
           <h4 id="name-forwarder-algorithms-in-pse">
@@ -2624,7 +2625,7 @@ RETURN
           </h4>
 <p id="section-6.1.1-1">Reflexive Interests are designed specifically to be no
            different from any other Interest other than the use of
-           the Reflexive Name Segment type as their
+           the Reflexive Interest Name Segment type as their
            high-order name segment. This means that a forwarder
            does not have to have special handling in terms of
            creation, and destruction, and other Interest processing
@@ -2931,10 +2932,10 @@ RETURN
 <a href="#section-8.1" class="section-number selfRef">8.1. </a><a href="#name-packet-encoding-for-ccnx" class="section-name selfRef">Packet encoding for CCNx</a>
         </h3>
 <p id="section-8.1-1" class="keepWithNext">For CCNx <span>[<a href="#RFC8609" class="cite xref">RFC8609</a>]</span>, this specification defines one new Name Segment type for the Reflexive Name Prefix TLV.<a href="#section-8.1-1" class="pilcrow">¶</a></p>
-<span id="name-reflexive-name-segment"></span><table class="center" id="table-1">
+<span id="name-reflexive-interest-name-seg"></span><table class="center" id="table-1">
           <caption>
 <a href="#table-1" class="selfRef">Table 1</a>:
-<a href="#name-reflexive-name-segment" class="selfRef">Reflexive Name Segment</a>
+<a href="#name-reflexive-interest-name-seg" class="selfRef">Reflexive Interest Name Segment</a>
           </caption>
 <thead>
             <tr>
@@ -2946,7 +2947,7 @@ RETURN
           <tbody>
             <tr>
               <td class="text-left" rowspan="1" colspan="1">T_REFLEXIVE_NAME</td>
-              <td class="text-left" rowspan="1" colspan="1">Reflexive Name Segment</td>
+              <td class="text-left" rowspan="1" colspan="1">Reflexive Interest Name Segment</td>
               <td class="text-left" rowspan="1" colspan="1">Name segment to use as name prefix in Reflexive Interest Messages</td>
             </tr>
           </tbody>
@@ -3505,8 +3506,8 @@ RETURN
    https://github.com/nflsjxc/Reflexive-Forwarding-NDN-demo/tree/master. It
    differs from this specification in the following ways:<a href="#appendix-B-1" class="pilcrow">¶</a></p>
 <section id="appendix-B.1">
-        <h3 id="name-reflexive-name-segment-2">
-<a href="#appendix-B.1" class="section-number selfRef">B.1. </a><a href="#name-reflexive-name-segment-2" class="section-name selfRef">Reflexive Name Segment</a>
+        <h3 id="name-reflexive-interest-name-segm">
+<a href="#appendix-B.1" class="section-number selfRef">B.1. </a><a href="#name-reflexive-interest-name-segm" class="section-name selfRef">Reflexive Interest Name Segment</a>
         </h3>
 <p id="appendix-B.1-1">
    Currently Reflexive Name Component is the suffix instead of the
