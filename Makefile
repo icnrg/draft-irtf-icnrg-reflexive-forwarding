@@ -9,15 +9,15 @@ all: $(TARGETS)
 $(TARGETS): $(DIAGRAMS)
 
 %.txt:%.xml
-	xml2rfc --bom $<
+	xml2rfc --bom --allow-local-file-access $<
 
 
 %.html:%.xml
-	xml2rfc --html $<
+	xml2rfc --html --allow-local-file-access $<
 
 
 %.pdf:%.xml
-	xml2rfc --pdf $<
+	xml2rfc --pdf --allow-local-file-access $<
 
 %.txt:%.diagram
 	-make $(NODE) td.js

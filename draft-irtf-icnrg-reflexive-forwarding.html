@@ -29,19 +29,19 @@
  applications. It updates RFC8569 and RFC8609.
        
     " name="description">
-<meta content="xml2rfc 3.23.2" name="generator">
+<meta content="xml2rfc 3.27.0" name="generator">
 <meta content="ICN" name="keyword">
 <meta content="Information-centric Networking" name="keyword">
 <meta content="forwarding" name="keyword">
-<meta content="draft-irtf-icnrg-reflexive-forwarding-00" name="ietf.draft">
+<meta content="draft-irtf-icnrg-reflexive-forwarding-01" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.23.2
+  xml2rfc 3.27.0
     Python 3.9.10
     ConfigArgParse 1.5.3
     google-i18n-address 3.0.0
     intervaltree 3.1.0
     Jinja2 3.1.2
-    lxml 4.9.0
+    lxml 5.3.0
     platformdirs 3.7.0
     pycountry 22.3.5
     pydyf 0.2.0
@@ -426,7 +426,7 @@ hr {
 /* Fix PDF info block run off issue */
 @media print {
   #identifiers dd {
-    float: none;
+    max-width: 100%;
   }
 }
 #identifiers .authors .author {
@@ -1234,11 +1234,11 @@ li > p:last-of-type:only-child {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">ICN Reflexive Forwarding</td>
-<td class="right">October 2024</td>
+<td class="right">February 2025</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Oran, et al.</td>
-<td class="center">Expires 21 April 2025</td>
+<td class="center">Expires 29 August 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1248,18 +1248,18 @@ li > p:last-of-type:only-child {
 <dt class="label-workgroup">Workgroup:</dt>
 <dd class="workgroup">ICNRG</dd>
 <dt class="label-internet-draft">Internet-Draft:</dt>
-<dd class="internet-draft">draft-irtf-icnrg-reflexive-forwarding-00</dd>
+<dd class="internet-draft">draft-irtf-icnrg-reflexive-forwarding-01</dd>
 <dt class="label-updates">Updates:</dt>
 <dd class="updates">
 <a href="https://www.rfc-editor.org/rfc/rfc8569" class="eref">8569</a>, <a href="https://www.rfc-editor.org/rfc/rfc8609" class="eref">8609</a> (if approved)</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2024-10-18" class="published">18 October 2024</time>
+<time datetime="2025-02-25" class="published">25 February 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Experimental</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-04-21">21 April 2025</time></dd>
+<dd class="expires"><time datetime="2025-08-29">29 August 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1318,7 +1318,7 @@ li > p:last-of-type:only-child {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 21 April 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 29 August 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1327,7 +1327,7 @@ li > p:last-of-type:only-child {
 <a href="#name-copyright-notice" class="section-name selfRef">Copyright Notice</a>
         </h2>
 <p id="section-boilerplate.2-1">
-            Copyright (c) 2024 IETF Trust and the persons identified as the
+            Copyright (c) 2025 IETF Trust and the persons identified as the
             document authors. All rights reserved.<a href="#section-boilerplate.2-1" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.2-2">
             This document is subject to BCP 78 and the IETF Trust's Legal
@@ -1615,7 +1615,7 @@ li > p:last-of-type:only-child {
       initial state synchronization between the peers. This is
       accomplished with a three-way (or longer) handshake, since
       employing a two-way handshake as provided in the existing NDN
-      and CCNx protocols exposes a number of well-know hazards, such
+      and CCNx protocols exposes a number of well-known hazards, such
       as <em>half-open connections</em>. When attempted for
       security-related operations such as key exchange, additional
       hazards such as <em>man-in-the-middle</em> attacks become
@@ -1763,7 +1763,7 @@ li > p:last-of-type:only-child {
 </dd>
           <dd class="break"></dd>
 <dt id="section-2.1-2.7"><strong>Reflexive Name Prefix (RNP) TLV</strong></dt>
-          <dd style="margin-left: 1.5em" id="section-2.1-2.8">An Interest message indicating to a producer that it may fetch data from the sending consumer by issuing one or more corresponding Reflexive Interests. It consists of a Name prefix whose high-order is a Reflexive Name Segment as defined above.<a href="#section-2.1-2.8" class="pilcrow">¶</a>
+          <dd style="margin-left: 1.5em" id="section-2.1-2.8">An Interest message field indicating to a producer that it may fetch data from the sending consumer by issuing one or more corresponding Reflexive Interests. It consists of a Name prefix whose high-order (i.e. first) name segement is a Reflexive Name Segment as defined above.<a href="#section-2.1-2.8" class="pilcrow">¶</a>
 </dd>
         <dd class="break"></dd>
 </dl>
@@ -1780,8 +1780,8 @@ li > p:last-of-type:only-child {
   This specification defines a <em>Reflexive Forwarding</em> extension
   to CCNx and NDN that avoids the problems enumerated in Sections
   <a href="#push-problems" class="auto internal xref">1.1</a> and <a href="#independent-exchange-problems" class="auto internal xref">1.2</a>. It
-  straightforwardly exploits the hop-by-hop state and symmetric
-  routing properties of the current protocols.<a href="#section-3-1" class="pilcrow">¶</a></p>
+  straightforwardly exploits the hop-by-hop state and path symmetry
+  properties of the current protocols.<a href="#section-3-1" class="pilcrow">¶</a></p>
 <p id="section-3-2">
   <a href="#forwarder-data-structures" class="auto internal xref">Figure 1</a> below illustrates a
   canonical NDN/CCNx forwarder with its conceptual data structures of
@@ -1789,14 +1789,14 @@ li > p:last-of-type:only-child {
   Information Base (FIB). The key observation involves the relation
   between the PIT and the FIB. Upon arrival of an Interest, a PIT
   entry is created which contains state recording the incoming
-  interface on which the Interest was received on. If the Interest is
+  interface on which the Interest was received. If the Interest is
   not immediately satisfied by cached data in the CS, the forwarder
   looks up the name in the FIB to ascertain the <em>next-hop</em> to
   propagate the Interest onward upstream toward the named
   producer. Therefore, a chain of forwarding state is established
   during Interest forwarding that couples the PIT entries of the chain
   of forwarders together conceptually as <em>breadcrumbs</em>. These
-  are used to forward the returning Data Message over the inverse path
+  are used to forward the returning Data Message over the reverse path
   through the chain of forwarders until the Data message arrives at
   the originating consumer. The state in the PITs is <em>unwound</em>
   by destroying it as each PIT entry is <em>satisfied</em>. This
@@ -1865,7 +1865,7 @@ li > p:last-of-type:only-child {
    ultimately arrives at a producer who can respond to it,
    there is sufficient state in the chain of forwarders to
    route not just a returning Data message, but potentially
-   another Interest directed through the inverse path to the
+   another Interest directed through the reverse path to the
    unique consumer who issued the original Interest. (<a href="#interest-aggregation" class="auto internal xref">Section 6.1.3</a> describes how Interest
    aggregation of requests to the same target name from multiple consumers
    interacts with this scheme.) The key question
@@ -1873,7 +1873,7 @@ li > p:last-of-type:only-child {
    be used to forward Interests.<a href="#section-3-4" class="pilcrow">¶</a></p>
 <p id="section-3-5">
    In order to achieve this <em>Reflexive Interest</em>
-   forwarding on the inverse path recorded in the PIT of each
+   forwarding on the reverse path recorded in the PIT of each
    forwarder, we need a few critical design elements:<a href="#section-3-5" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-3-6">
    <li id="section-3-6.1">
@@ -1889,7 +1889,7 @@ li > p:last-of-type:only-child {
 </li>
         <li id="section-3-6.2">
 <div id="interest-fwd-requirements">
-     Each forwarder along the inverse path from producer to
+     Each forwarder along the reverse path from producer to
      consumer must be able to forward the Reflexive Interest
      towards the direction of the Consumer, without relying
      on global routing information, as the Reflexive
@@ -1935,10 +1935,20 @@ li > p:last-of-type:only-child {
 <a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-interaction-flow-for-reflex" class="section-name selfRef">Interaction Flow for Reflexive Forwarding: An Example</a>
         </h3>
 <p id="section-4.2-1">Based on the implementations approach in Cefore <span>[<a href="#Asaeda2019" class="cite xref">Asaeda2019</a>]</span><span>[<a href="#Cefore" class="cite xref">Cefore</a>]</span>, an example of the overall interaction flow for reflexive forwarding for CCNx is described below and illustrated in <a href="#overall-message-flow-ccnx" class="auto internal xref">Figure 2</a>.<a href="#section-4.2-1" class="pilcrow">¶</a></p>
-<p id="section-4.2-2">Forwarder operation for CCNx is slightly changed in the following respects when supporting Reflexive Interests. When a forwarder receives a Trigger Interest (TI) that will be sent toward the producer, the forwarder creates two PIT entries; (1) a regular PIT entry for TI (TI-PIT, hereafter) that consists of the name of the Name TLV in TI, downstream face (i.e., face from which the TI is received), and upstream face(s) (i.e., face(s) from which the TI is/are forwarded), and (2) a tentative PIT entry for a Reflexive Interest (RI) (RI-PIT(dummy), hereafter) that includes Reflexive Name Prefix (RNP), downstream face (i.e., face(s) from which the TI is/are forwarded), and upstream face (i.e., face from which the TI is received). RI-PIT(dummy) is created whenever TI is received. However, RI-PIT(dummy) is not used for packet forwarding; it is only referred to create the actual PIT entry for RI (RI-PIT, hereafter). When a forwarder receives RI, it creates RI-PIT by copying the downstream and upstream faces from the RI-PIT(dummy) with the same RNP.<a href="#section-4.2-2" class="pilcrow">¶</a></p>
+<p id="section-4.2-2">Forwarder operation for CCNx is slightly changed in the following respects when supporting Reflexive Interests.<a href="#section-4.2-2" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.2-3.1">When a forwarder receives a Trigger Interest (TI) that will be sent toward the producer, in addition to the normal PIT entry created on receipt of a new Interest message, the forwarder creates a <em>tentative</em> PIT entry for the possible later receipt of a Reflexive Interest<a href="#section-4.2-3.1" class="pilcrow">¶</a>
+</li>
+          <li class="normal" id="section-4.2-3.2"> This tentative PIT entry has the Reflexive Name Prefix as its Name field, and the incoming face list of the trigger interest as the potential output face(s) for any subsequent Reflexive Interest received.<a href="#section-4.2-3.2" class="pilcrow">¶</a>
+</li>
+          <li class="normal" id="section-4.2-3.3">On receipt of a Reflexive Interest matching the Reflexive Name Prefix of a tentative PIT entry, a full PIT entry is created from the tentative entry and normal PIT processing ensues (e.g. also including recording the incoming face(s) of the Reflexive Interest)<a href="#section-4.2-3.3" class="pilcrow">¶</a>
+</li>
+          <li class="normal" id="section-4.2-3.4">The Reflexive Interest is forwarded over the recorded outgoing faces from the PIT as opposed to examining the FIB to find an appropriate next hop for that Reflexive Interest.<a href="#section-4.2-3.4" class="pilcrow">¶</a>
+</li>
+          </ul>
 <span id="name-overview-of-message-flow-in"></span><div id="overall-message-flow-ccnx">
 <figure id="figure-2">
-          <div class="alignCenter art-text artwork" id="section-4.2-3.1">
+          <div class="alignCenter art-text artwork" id="section-4.2-4.1">
 <pre>
 +----------+           +-----------+             +----------+
 | Consumer |           | Forwarder |             | Producer |
@@ -1951,8 +1961,8 @@ li > p:last-of-type:only-child {
     |    | in TI-PIT(TI)   | |                          |
     |    +-----------------+ |                          |
     |                        | +--------------------\   |
-    |                        |-| add RNP to         |   |
-    |                        | | RI-PIT(dummy)(RI)  |   |
+    |                        |-| add RNP to tentative   |
+    |                        | | RI-PIT(RI)         |   |
     |                        | +--------------------+   |
     |                        |                          |
     |                        | TI                       |
@@ -1970,7 +1980,7 @@ li > p:last-of-type:only-child {
     |                        |&lt;-------------------------|
     |                        | +----------------------\ |
     |                        |-| check RNP match      | |
-    |                        | | of RI-PIT(dummy)(RI),| |
+    |                        | | of RI-PIT(tentative)(RI),| |
     |                        | | create RI-PIT(RI),   | |
     |                        | | forward RI           | |
     |                        | +----------------------+ |
@@ -2034,9 +2044,16 @@ li > p:last-of-type:only-child {
 <a href="#name-overview-of-message-flow-in" class="selfRef">Overview of Message Flow in CCNx</a>
           </figcaption></figure>
 </div>
-<p id="section-4.2-4">The reason to maintain RI-PIT(dummy) and RI-PIT for reflexive forwarding is that there maybe the case where <span><a href="#I-D.mosko-icnrg-ccnxchunking" class="internal xref">multiple chunks</a> [<a href="#I-D.mosko-icnrg-ccnxchunking" class="cite xref">I-D.mosko-icnrg-ccnxchunking</a>]</span> are requested using a single Reflexive Interest. Followings are the examples of the names without/with chunk information enclosed in TI and RIs:<a href="#section-4.2-4" class="pilcrow">¶</a></p>
+<p id="section-4.2-5">There are a number of reasons to maintain both a tentative RI-PIT and (possibly multiple RI-PIT entries for reflexive forwarding. Among them are:<a href="#section-4.2-5" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.2-6.1">there may be <span><a href="#I-D.mosko-icnrg-ccnxchunking" class="internal xref">multiple chunks</a> [<a href="#I-D.mosko-icnrg-ccnxchunking" class="cite xref">I-D.mosko-icnrg-ccnxchunking</a>]</span>  requested using a sequence of Reflexive Interests.<a href="#section-4.2-6.1" class="pilcrow">¶</a>
+</li>
+          <li class="normal" id="section-4.2-6.2">Multiple Reflexive Interests may be issued by the producer to fetch arguments in the remote invocation use case described in  <a href="#RMI" class="auto internal xref">Section 5.1</a>.<a href="#section-4.2-6.2" class="pilcrow">¶</a>
+</li>
+        </ul>
+<p id="section-4.2-7">Following are some examples of the names without/with chunk information enclosed in TI and RIs:<a href="#section-4.2-7" class="pilcrow">¶</a></p>
 <span id="name-responses-without-with-mult"></span><figure id="figure-3">
-          <div class="alignLeft art-text artwork" id="section-4.2-5.1">
+          <div class="alignLeft art-text artwork" id="section-4.2-8.1">
 <pre>
 TI: ccnx:/Name=example.com/RNP=RNP1
 RI: ccnx:/RNP=RNP1
@@ -2050,7 +2067,7 @@ RI_3: ccnx:/RNP=RNP1/Chunk=2  EndChunkNumber=2
 <figcaption><a href="#figure-3" class="selfRef">Figure 3</a>:
 <a href="#name-responses-without-with-mult" class="selfRef">Responses without/with multiple chunks using Reflexive Interests</a>
           </figcaption></figure>
-<p id="section-4.2-6">RI-PIT MAY include a chunk number to the RNP, while RI-PIT(dummy) does not. Like an ordinary PIT entry, RI-PIT is erased whenever the corresponding RD is forwarded through the downstream face, while RI-PIT(dummy) is erased when the RI-PIT(dummy) lifetime expires or Trigger Data (TD) is received and forwarded at the forwarder.<a href="#section-4.2-6" class="pilcrow">¶</a></p>
+<p id="section-4.2-9">RI-PIT MAY include a chunk number to the RNP, while RI-PIT(tentative) does not. Like an ordinary PIT entry, RI-PIT is erased whenever the corresponding RD is forwarded through the downstream face, while RI-PIT(tentative) is erased when the RI-PIT(tentative) lifetime expires or Trigger Data (TD) is received and forwarded at the forwarder.<a href="#section-4.2-9" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="consumer-operation">
@@ -2060,10 +2077,9 @@ RI_3: ccnx:/RNP=RNP1/Chunk=2  EndChunkNumber=2
         </h3>
 <p id="section-4.3-1">
  A consumer that wants to employ Reflexive Forwarding
- MUST create a Trigger Interest (TI) with a Reflexive Name
- Prefix (RNP) TLV that is used by the producer when
- issuing Reflexive Interests (RI) back to the consumer. Upon
- receiving a Reflexive Interest (e.g. RI1 in 
+ MUST include a Reflexive Name Prefix (RNP) TLV in the Interest, which causes it
+ to be treated as a Trigger Interest by Forwarders and Producers. The producer can
+ subsequently craft Reflexive Interests with names using the RNP as the first name segment. Upon receiving a Reflexive Interest (e.g. RI1 in 
  <a href="#overall-message-flow-ccnx" class="auto internal xref">Figure 2</a>) from a producer in response
  to the Interest whose first name segment is the RNP supplied
  earlier, the consumer SHOULD perform a name match against the
@@ -2091,9 +2107,7 @@ RI_3: ccnx:/RNP=RNP1/Chunk=2  EndChunkNumber=2
  Interest message.<a href="#section-4.4-1" class="pilcrow">¶</a></p>
 <p id="section-4.4-2">
  We define a new typed name segment, identified by the <em>Reflexive Interest Name Segment</em>. The Reflexive Interest Name Segment MUST be the first (i.e. high order) name segment of any Reflexive Interest issued by a producer. In CCNx, the Reflexive Interest Name Segment type value will be registered in the IANA registry for <span>[<a href="#RFC8609" class="cite xref">RFC8609</a>]</span> when approved (see <a href="#IANA" class="auto internal xref">Section 9</a>).<a href="#section-4.4-2" class="pilcrow">¶</a></p>
-<p id="section-4.4-3"> The value of the Reflexive Interest Name Segment is assigned by the consumer, which provides the entropy required to uniquely identify the issuing consumer for the duration of any outstanding Interest-Data exchange. For example, a UUID, which is a random 128 bit quantity specified in <span>[<a href="#RFC9562" class="cite xref">RFC9562</a>]</span>
-          
- can be used for the value of the Reflexive Interest Name Segment. Any scheme that meets the randomness and entropy requirements can suffice, but the consumer SHOULD choose a different random value for the value of the Reflexive Interest Name Segment it constructs because:<a href="#section-4.4-3" class="pilcrow">¶</a></p>
+<p id="section-4.4-3"> The value of the Reflexive Interest Name Segment is assigned by the consumer. The selected value MUST provide sufficient entropy to uniquely identify the issuing consumer for the duration of any outstanding Interest-Data exchange. Any scheme that meets the randomness and entropy requirements can suffice, but the consumer SHOULD choose a different random value for the value of the Reflexive Interest Name Segment it constructs because:<a href="#section-4.4-3" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-4.4-4">
    <li id="section-4.4-4.1">If there is insufficient randomness, a name collision on
    the Reflexive Names could occur at any of the intermediate
@@ -2106,49 +2120,52 @@ RI_3: ccnx:/RNP=RNP1/Chunk=2  EndChunkNumber=2
    be used by surveillance adversaries for tracking purposes.<a href="#section-4.4-4.2" class="pilcrow">¶</a>
 </li>
         </ol>
-<p id="section-4.4-5">
+<p id="section-4.4-5">For example, a UUID, which is a randomly generated 128 bit quantity specified in <span>[<a href="#RFC9562" class="cite xref">RFC9562</a>]</span>
+          
+ can be used for the value of the Reflexive Interest Name Segment.<a href="#section-4.4-5" class="pilcrow">¶</a></p>
+<p id="section-4.4-6">
  This initial name segment is either communicated by itself
  through a <em>Reflexive Name Prefix TLV</em> in the
  originating Interest, or prepended to any object names the
  consumer wishes the producer to fetch explicitly where there
  is more than one object needed by the producer for the
- current Interest-Data interaction. There are four cases to consider:<a href="#section-4.4-5" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-4.4-6">
-   <li id="section-4.4-6.1">
+ current Interest-Data interaction. There are four cases to consider:<a href="#section-4.4-6" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-4.4-7">
+   <li id="section-4.4-7.1">
 <div id="single-reflexive-object">
      The reflexive <em>fullname</em> of a single object to fetch.<a href="#single-reflexive-object" class="pilcrow">¶</a>
 </div>
           </li>
-<li id="section-4.4-6.2">
+<li id="section-4.4-7.2">
      A single reflexive name prefix out of which the producer
      can (by application-specific means) construct a number of
-     <em>fullnames</em> of the objects it may want to fetch.<a href="#section-4.4-6.2" class="pilcrow">¶</a>
+     <em>fullnames</em> of the objects it may want to fetch.<a href="#section-4.4-7.2" class="pilcrow">¶</a>
 </li>
-          <li id="section-4.4-6.3">
+          <li id="section-4.4-7.3">
      The reflexive <em>fullname</em> of a <span><a href="#I-D.irtf-icnrg-flic" class="internal xref">FLIC Manifest</a> [<a href="#I-D.irtf-icnrg-flic" class="cite xref">I-D.irtf-icnrg-flic</a>]</span>
      enumerating the suffixes that may be used by the producer
      to construct the necessary names. We distinguish this from the single object fetch
      in <span><a href="#single-reflexive-object" class="internal xref">case</a> (<a href="#single-reflexive-object" class="auto internal xref">1</a>)</span> above because 
-     the use of a Manifest implies multiple reflexive Interest/Data exchanges with the consumer.<a href="#section-4.4-6.3" class="pilcrow">¶</a>
+     the use of a Manifest implies multiple reflexive Interest/Data exchanges with the consumer.<a href="#section-4.4-7.3" class="pilcrow">¶</a>
 </li>
-          <li id="section-4.4-6.4">
+          <li id="section-4.4-7.4">
      Multiple Reflexive Name Prefix TLVs MAY be included in the
      Interest message if none of the above 3 options covers the
-     desired use case.<a href="#section-4.4-6.4" class="pilcrow">¶</a>
+     desired use case.<a href="#section-4.4-7.4" class="pilcrow">¶</a>
 </li>
         </ol>
-<p id="section-4.4-7">
+<p id="section-4.4-8">
  The last of the four options above, while not explicitly
  outlawed, SHOULD NOT be used. This is because it results in
  a longer Interest message and requires extra PIT
  resources. Hence, it is more likely a forwarder will reject
  the Interest for lack of resources. A forwarder MAY optimize
  for the case of a single Reflexive Name Prefix TLV at the expense
- of those with more than one.<a href="#section-4.4-7" class="pilcrow">¶</a></p>
-<aside id="section-4.4-8">
-          <p id="section-4.4-8.1"><strong>[HA]</strong> IMO, above statement is not sufficient as "SHOULD NOT" does not prohibit for some implementations to implement multiple RNPs for a single RI. It is necessary to clarify how to deal with or support multiple RNPs included in one TI. For example, if TI includes two RNPs, the following cases can be considered; (1) one RI including two RNPs is invoked, and (2) each RNP is sent one RI separately, meaning two RIs are invoked for two RNPs. For (1), RD must include two data objects, while it is a different concept from the regular CCNx (and NDN, maybe); therefore (1) is not suitable. On the other hand, for (2), two RDs are sent for each data object. It requires that two RI-PIT entries must be maintained when TI is received, but it may be able to work properly. So, my recommendation is that the following sentence should be appended at the above statemtents: "Note that if multiple RNP TLVs are included in one TI, each RNP TLV MUST be separately formed and independently sent in one RI."<a href="#section-4.4-8.1" class="pilcrow">¶</a></p>
+ of those with more than one.<a href="#section-4.4-8" class="pilcrow">¶</a></p>
+<aside id="section-4.4-9">
+          <p id="section-4.4-9.1"><strong>[HA]</strong> IMO, above statement is not sufficient as "SHOULD NOT" does not prohibit for some implementations to implement multiple RNPs for a single RI. It is necessary to clarify how to deal with or support multiple RNPs included in one TI. For example, if TI includes two RNPs, the following cases can be considered; (1) one RI including two RNPs is invoked, and (2) each RNP is sent one RI separately, meaning two RIs are invoked for two RNPs. For (1), RD must include two data objects, while it is a different concept from the regular CCNx (and NDN, maybe); therefore (1) is not suitable. On the other hand, for (2), two RDs are sent for each data object. It requires that two RI-PIT entries must be maintained when TI is received, but it may be able to work properly. So, my recommendation is that the following sentence should be appended at the above statemtents: "Note that if multiple RNP TLVs are included in one TI, each RNP TLV MUST be separately formed and independently sent in one RI."<a href="#section-4.4-9.1" class="pilcrow">¶</a></p>
 </aside>
-<p id="section-4.4-9">
+<p id="section-4.4-10">
  A producer, upon receiving an Interest with one or more
  Reflexive Name Prefix TLVs, may decide it needs to retrieve the
  associated data object(s). It therefore can issue one or
@@ -2161,7 +2178,7 @@ RI_3: ccnx:/RNP=RNP1/Chunk=2  EndChunkNumber=2
  the required objects to complete the original Interest-Data
  exchange, it can issue its Data response, which unwinds all
  the established state at the producer, the consumer, and the
- intermediate forwarders.<a href="#section-4.4-9" class="pilcrow">¶</a></p>
+ intermediate forwarders.<a href="#section-4.4-10" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="producer-operation">
@@ -2228,7 +2245,7 @@ RI_3: ccnx:/RNP=RNP1/Chunk=2  EndChunkNumber=2
 <div class="lang-pseudocode sourcecode" id="section-4.6.1.1-1">
 <pre>
 Create PIT entry for Interest;
-Optionally create a dummy PIT entry for any potential Reflexive Interests
+Optionally create a tentative PIT entry for any potential Reflexive Interests
      expected to match the RNP (or RNPs) in the Trigger Interest;
 Forward Interest upstream;
 </pre><a href="#section-4.6.1.1-1" class="pilcrow">¶</a>
@@ -2245,12 +2262,12 @@ Use RNP of Interest's Name TLV to lookup original Interest PIT entry;
 IF PIT entry of original Interest not is found
     Issue an Interest Return with "No Route" error
          back to the producer;
-    RETURN;
 ELSE
     Create PIT entry for Reflexive Interest
-    (or optionally modify the dummy RI PIT entry that was created together
+    (or optionally modify the tentative RI PIT entry that was created together
      with the Trigger Interest PIT entry);
     Process as a normal Interest;
+RETURN
 </pre><a href="#section-4.6.1.2-1" class="pilcrow">¶</a>
 </div>
 </section>
@@ -2307,7 +2324,7 @@ ELSE
 <p id="section-5.1-3">
  When the server has obtained the necessary credentials and
  input parameters, it can decide to commit computing
- resources, starts the compute process, and returns a handle
+ resources, start the compute process, and return a handle
  ("Thunk") in the final Data message to the original consumer
  (client).<a href="#section-5.1-3" class="pilcrow">¶</a></p>
 <p id="section-5.1-4">
@@ -2749,7 +2766,7 @@ ELSE
  aggregated. The forwarder might, just as for any other
  Interest, decide to either do single or multi-path forwarding
  of that reflexive Interest. If sent multi-path in parallel,
- these also will reconverge on the inverse path and get
+ these also will reconverge on the reverse path and get
  aggregated.<a href="#section-6.1.3-3" class="pilcrow">¶</a></p>
 <p id="section-6.1.3-4">For multi-destination, reflexive Interests might get issued
  by multiple producers, but they will carry the same reflexive
@@ -2814,7 +2831,7 @@ ELSE
    The reflexive named objects provide "local", temporary names
    that are only defined for one specific interaction between a
    consumer and a producer. Corresponding Data objects MUST NOT
-   be shared among multiple consumers (violating this would require special gyrations by the producer since the reflexive Name utilizes per-consumer/per-interaction random values). A producer MUST NOT issue an Interest message for any reflexive name after it has sent the final Data message answering the original Interest.<a href="#section-6.2.3-1" class="pilcrow">¶</a></p>
+   be shared among multiple consumers (violating this would require special gyrations by the producer since the reflexive Name utilizes per-consumer/per-interaction unique values generated randomly as described in <a href="#naming" class="auto internal xref">Section 4.4</a>). A producer MUST NOT issue an Interest message for any reflexive name after it has sent the final Data message answering the original Interest.<a href="#section-6.2.3-1" class="pilcrow">¶</a></p>
 <p id="section-6.2.3-2">
    Forwarders MAY still cache reflexive Data objects for
    retransmissions within a transactions, but they MUST invalidate or remove
@@ -3069,11 +3086,11 @@ ELSE
         <h3 id="name-collisions-of-reflexive-int">
 <a href="#section-10.1" class="section-number selfRef">10.1. </a><a href="#name-collisions-of-reflexive-int" class="section-name selfRef">Collisions of reflexive Interest names</a>
         </h3>
-<p id="section-10.1-1">Reflexive Interest names are constructed using 128-bit random
-      numbers. This is intended to ensure an off-path attacker cannot
+<p id="section-10.1-1">Reflexive Interest names need to be constructed with sufficient randomness
+      to ensure an off-path attacker cannot
       easily manufacture a matching reflexive Interest and either
       masquerade as the producer, or mount a denial of service attack
-      on the consumer. It also limits tracking through the linkability
+      on the consumer. Doing so also limits tracking through the linkability
       of Interests containing a re-used random value.<a href="#section-10.1-1" class="pilcrow">¶</a></p>
 <p id="section-10.1-2">Therefore consumers MUST utilize a robust means of generating
       these random values, and it is RECOMMENDED that the <span>[<a href="#RFC9562" class="cite xref">RFC9562</a>]</span> format
@@ -3116,7 +3133,7 @@ ELSE
 <p id="section-10.3-2">Reflexive forwarding does not change the overall landscape
        of privacy tradeoffs, nor seem to introduce additional
        hazards. In fact, the privacy exposures are confined to the
-       inverse path of forwarders from the producer to the consumer,
+       reverse path of forwarders from the producer to the consumer,
        through which the original Interest forwarding may have
        already exposed names on path. Similar name privacy techniques
        to those cited above may be equally applied to the names in
@@ -3210,11 +3227,11 @@ ELSE
 <dd class="break"></dd>
 <dt id="I-D.irtf-icnrg-flic">[I-D.irtf-icnrg-flic]</dt>
       <dd>
-<span class="refAuthor">Tschudin, C.</span>, <span class="refAuthor">Wood, C. A.</span>, <span class="refAuthor">Mosko, M.</span>, and <span class="refAuthor">D. R. Oran</span>, <span class="refTitle">"File-Like ICN Collections (FLIC)"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-irtf-icnrg-flic-05</span>, <time datetime="2023-10-22" class="refDate">22 October 2023</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-irtf-icnrg-flic-05">https://datatracker.ietf.org/doc/html/draft-irtf-icnrg-flic-05</a>&gt;</span>. </dd>
+<span class="refAuthor">Tschudin, C.</span>, <span class="refAuthor">Wood, C. A.</span>, <span class="refAuthor">Mosko, M.</span>, and <span class="refAuthor">D. R. Oran</span>, <span class="refTitle">"File-Like ICN Collections (FLIC)"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-irtf-icnrg-flic-06</span>, <time datetime="2024-10-21" class="refDate">21 October 2024</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-irtf-icnrg-flic-06">https://datatracker.ietf.org/doc/html/draft-irtf-icnrg-flic-06</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="I-D.mosko-icnrg-ccnxchunking">[I-D.mosko-icnrg-ccnxchunking]</dt>
       <dd>
-<span class="refAuthor">Mosko, M.</span>, <span class="refTitle">"CCNx Content Object Chunking"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-mosko-icnrg-ccnxchunking-02</span>, <time datetime="2016-06-01" class="refDate">1 June 2016</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-mosko-icnrg-ccnxchunking-02">https://datatracker.ietf.org/doc/html/draft-mosko-icnrg-ccnxchunking-02</a>&gt;</span>. </dd>
+<span class="refAuthor">Mosko, M.</span> and <span class="refAuthor">H. Asaeda</span>, <span class="refTitle">"CCNx Content Object Chunking"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-mosko-icnrg-ccnxchunking-03</span>, <time datetime="2024-10-20" class="refDate">20 October 2024</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-mosko-icnrg-ccnxchunking-03">https://datatracker.ietf.org/doc/html/draft-mosko-icnrg-ccnxchunking-03</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="Krol2018">[Krol2018]</dt>
       <dd>
@@ -3300,7 +3317,7 @@ ELSE
 <div id="FIB-requirements">
 <p id="appendix-A.1-1">
      The original draft specification employed the use of dynamically-created FIB entries for forwarding Reflexive Interests. In this approach,
-     at each forwarder along the inverse path from producer to
+     at each forwarder along the reverse path from producer to
      consumer, a FIB entry must be present that matches this
      name via Longest Name Prefix Match (LNPM), so that when the reflexive interest
      arrives, the forwarder can forward it downstream toward
