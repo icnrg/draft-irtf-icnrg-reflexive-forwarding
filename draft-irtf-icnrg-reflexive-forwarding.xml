@@ -43,9 +43,6 @@
       <organization>HKUST(GZ)</organization>
       <address>
         <postal>
-<!--          <street>Nansha</street> -->
-          <!-- Reorder these if your country does things differently -->
-<!--          <code>26723</code> -->
           <city>Guangzhou</city>
           <country>China</country>
         </postal>
@@ -327,10 +324,11 @@
 	 <t>For general ICN-related terms, we adopt the terms defined in <xref target="RFC8793"/>. For CCNx-specific terms, we use the terms defined in <xref target="RFC8569"/> and <xref target="RFC8609"/>. This specification defines the following additional terms:</t>
 	 <dl>
 	 	<dt><strong>Reflexive Interest</strong> (RI)</dt><dd>An interest message sent from a producer back towards a consumer to fetch data needed to satisfy the original interest.</dd>
-		<dt><strong>Trigger Interest</strong> (TI)</dt><dd>An interest message sent from a consumer to a producer to trigger one or more Reflexive Interests sent by the producer.</dd>
-	 	<dt><strong>Reflexive Name Seqment</strong></dt><dd>A high-order typed name segment which identifies an Interest as being a Reflexive Interest instead of a normal Interest.</dd>
-	 	<dt><strong>Reflexive Name Prefix (RNP) TLV</strong></dt><dd>An Interest message field indicating to a producer that it may fetch data from the sending consumer by issuing one or more corresponding Reflexive Interests. It consists of a Name prefix whose high-order (i.e. first) name segement is a Reflexive Name Seqment as defined above.</dd>
+		<dt><strong>Trigger Interest</strong> (TI)</dt><dd>An interest message sent from a consumer to a producer to potentially trigger one or more Reflexive Interests sent by the producer back to the consumer.</dd>
+	 	<dt><strong>Reflexive Name Segment</strong></dt><dd>A typed name segment which when present as the highest-order name segment identifies an Interest as being a Reflexive Interest instead of a normal Interest.</dd>
+	 	<dt><strong>Reflexive Name Prefix (RNP) TLV</strong></dt><dd>An Interest message field indicating to a producer that it may fetch data from the sending consumer by issuing one or more corresponding Reflexive Interests. It consists of a Name prefix whose high-order (i.e. first) name segement is a Reflexive Name Segment as defined above.</dd>
 	 </dl>
+	 <aside><t><strong>Note: </strong>the above definition may need to be adjusted depending on the decision about protocol encoding discussed in  <xref target="reflexive-name-prefix-in-trigger-interest"/>.</t></aside>
 	</section>
 
 </section>
@@ -439,7 +437,7 @@
 	  aggregation of requests to the same target name from multiple consumers
 	  interacts with this scheme.) The key question
 	  therefore is how to access this state in a way that it can
-	  be used to forward Interests.
+	  be used to forward Interests from the producer back to the consumer.
 	</t>
 
 	<t>
@@ -464,18 +462,12 @@
 	  <li anchor="interest-fwd-requirements">
 	    Each forwarder along the reverse path from producer to
 	    consumer must be able to forward the Reflexive Interest
-	    towards the direction of the Consumer, without relying
+	    towards the direction of the Consumer without relying
 	    on global routing information, as the Reflexive
 	    Name Prefixes are only valid while the originating Interest/Data exchange
 	    state is present at the forwarders. Essential to this operation is the ability to
-	    access the PIT entry associated with the original Interest
-	    message, which triggers the Reflexive Interest, since that contains the state necessary to
-	    identify the ingress face of the original Interest, which
-	    is the unique (modulo aggregation) output face over which the Reflexive
-	    Interest needs to be forwarded. The Name assigned by the
-	    consumer for Reflexive Name Prefix in theory is adequate
-	    to the task, but entails an expensive and complicated
-	    lookup procedure.
+	    access state created by the PIT entry associated with the Trigger Interest message since that is the state necessary to identify the ingress face of the Trigger Interest. This is the unique output face (modulo interest aggregation)  over which the Reflexive Interest needs to be forwarded. The Name assigned by the
+	    consumer for Reflexive Name Prefix in theory is adequate to the task, but entails a potentially expensive and complicated lookup procedure.
 	  </li>
 
 	  <li>
@@ -520,114 +512,34 @@
 
 	<t>Based on the implementation approach in Cefore <xref target="Asaeda2019"></xref><xref target="Cefore"></xref>, an example of the overall interaction flow for reflexive forwarding for CCNx is presented below and illustrated in <xref target="overall-message-flow-ccnx"/>.</t>
 
-	<t>Forwarder operation for CCNx is slightly changed in the following respects when supporting Reflexive Interests.</t>
+	<t>Forwarder operation for CCNx is enhanced in the following respects when supporting Reflexive Interests.</t>
 	<ul>
 		<li>When a forwarder receives a Trigger Interest (TI) that will be sent toward the producer, in addition to the normal PIT entry created on receipt of a new Interest message, the forwarder creates a <em>tentative</em> PIT entry for the possible later receipt of a Reflexive Interest</li>
-		<li> This tentative PIT entry has the Reflexive Name Prefix as its Name field, and the incoming face list of the trigger interest as the potential output face(s) for any subsequent Reflexive Interest received.</li>
+		<li> This tentative PIT entry has the Reflexive Name Prefix from the Trigger Interest as its Name field, and the incoming face list of the trigger interest as the potential output face(s) for any subsequent Reflexive Interest received.</li>
 		<li>On receipt of a Reflexive Interest matching the Reflexive Name Prefix of a tentative PIT entry, a full PIT entry is created from the tentative entry and normal PIT processing ensues (e.g. also including recording the incoming face(s) of the Reflexive Interest).</li>
 		<li>The Reflexive Interest is forwarded over the recorded outgoing face(s) from the PIT as opposed to examining the FIB to find an appropriate next hop for that Reflexive Interest.</li>
 		<!--the name of the Name TLV in TI, downstream face (i.e., face from which the TI is received), and upstream face(s) (i.e., face(s) from which the TI is/are forwarded), and (2) a tentative PIT entry for a Reflexive Interest (RI) (RI-PIT(dummy), hereafter) that includes Reflexive Name Prefix (RNP), downstream face (i.e., face(s) from which the TI is/are forwarded), and upstream face (i.e., face from which the TI is received). RI-PIT(dummy) is created whenever TI is received. However, RI-PIT(dummy) is not used for packet forwarding; it is only referred to create the actual PIT entry for RI (RI-PIT, hereafter). When a forwarder receives RI, it creates RI-PIT by copying the downstream and upstream faces from the RI-PIT(dummy) with the same RNP.</t> -->
 	</ul>
 	
-	<figure anchor="overall-message-flow-ccnx"><name>Overview of Message Flow in CCNx</name>
-	  <artwork align="center"><![CDATA[
-+----------+           +-----------+             +----------+
-| Consumer |           | Forwarder |             | Producer |
-+----------+           +-----------+             +----------+
-    |                        |                          |
-    | TI                     |                          |
-    |----------------------->|                          |
-    |    +-----------------\ |                          |
-    |    | record fullname |-|                          |
-    |    | in TI-PIT(TI)   | |                          |
-    |    +-----------------+ |                          |
-    |                        | +--------------------\   |
-    |                        |-| add RNP to tentative   |
-    |                        | | RI-PIT(RI)         |   |
-    |                        | +--------------------+   |
-    |                        |                          |
-    |                        | TI                       |
-    |                        |------------------------->|
-    |                        |                          | +-----------\
-    |                        |                          |-| check     |
-    |                        |                          | | prefix,   |
-    |                        |                          | | create    |
-    |                        |                          | | Reflexive |
-    |                        |                          | | Interest  |
-    |                        |                          | | state     |
-    |                        |                          | +-----------+
-    |                        |                          |
-    |                        |                       RI |
-    |                        |<-------------------------|
-    |                        | +----------------------\ |
-    |                        |-| check RNP match      | |
-    |                        | | of RI-PIT(tentative)(RI),| |
-    |                        | | create RI-PIT(RI),   | |
-    |                        | | forward RI           | |
-    |                        | +----------------------+ |
-    |                        |                          |
-    |                     RI |                          |
-    |<-----------------------|                          |
-    |                        |                          |
-    |                        |                          |
-    | RD                     |                          |
-    |----------------------->|                          |
-    |                        | +---------------------\  |
-    |                        |-| satisfy RI-PIT(RI), |  |
-    |                        | | forward RD via      |  |
-    |                        | | RI-PIT(RI)          |  |
-    |                        | +---------------------+  |
-    |                        |                          |
-    |                        | RD                       |
-    |                        |------------------------->|
-    |                        | +--------------------\   |
-    |                        |-| remove RI-PIT(RI)  |   |
-    |                        | +--------------------+   |
-    .                        .                          .
-    .                        .                          .
-    Chunks denoted by a serial counter incrementing by 1 
-    for each contiguous chunk may be retrieved by
-    multiple RIs and provided with RDs from the Consumer
-    .                        .                          .
-    .                        .                          .
-    |                        |                          | +------------\
-    |                        |                          |-| all        |
-    |                        |                          | | parameters |
-    |                        |                          | | received,  |
-    |                        |                          | | answer TI  |
-    |                        |                          | +------------+
-    |                        |                          |
-    |                        |                       TD |
-    |                        |<-------------------------|
-    |   +------------------\ |                          |
-    |   | satisfy PIT(TI), |-|                          |
-    |   | forward TD       | |                          |
-    |   +------------------+ |                          |
-    |                        |                          |
-    |                     TD |                          |
-    |<-----------------------|                          |
-    |                        | +--------------------\   |
-    |                        |-| remove             |   |
-    |                        | | RI-PIT(tentative)(RI)  |
-    |                        | | and TI-PIT(TI)     |   |
-    |                        | +--------------------+   |
-    |                        |                          |
- 
+	<figure anchor="overall-message-flow-ccnx">
+	<name>Overview of Reflexive Forwarding in CCNx</name>
+	<artwork type="ascii-art" src="messsage-flow-generic-ccnx.txt"/>
+	<artwork type="ascii-art">
     Legend:
-    TI: Trigger Interest containing Reflexive Name Prefix TLV
-    RI: Reflexive Interest with Reflexive Name Prefix TLV
+    TI: Trigger Interest containing Reflexive Name Prefix
+    RI: Reflexive Interest with Reflexive Name Prefix
     RNP: Reflexive Name Prefix
     RD: Data message, answering RI
     TD: Data message, answering TI
-	  ]]></artwork>
+	  </artwork>
 	</figure>
 
 	<t>There are a number of reasons to maintain both a tentative RI-PIT and (possibly) multiple RI-PIT entries for reflexive forwarding. Among them are:</t>
 	<ul>
-	<li>There may be <xref target="I-D.mosko-icnrg-ccnxchunking">multiple chunks</xref>  requested using a sequence of Reflexive Interests.</li>
+	<li>There may be <xref target="I-D.irtf-icnrg-ccnxchunking">multiple chunks</xref>  requested using a sequence of Reflexive Interests.</li>
 	<li>Multiple Reflexive Interests may be issued by the producer to fetch arguments in the remote invocation use case described in  <xref target="RMI"/>.</li>
 	</ul>
-	<t>This is further discussed in <xref target="multiple-reflexive-interests"/> on how to handle multiple reflexive intersts send in the context of a single Trigger Interest / Trigger Data interaction.</t>
+	<t>This is further discussed in <xref target="multiple-reflexive-interests"/> on how to handle multiple reflexive interests sent in the context of a single Trigger Interest / Trigger Data interaction.</t>
 	
 	</section>
 	
@@ -642,14 +554,13 @@
 	example through compile time bindings of arguments in
 	an interface definition or by the architectural definition of a
 	simple sensor reading. In other cases, the full names of the
-	individual objects must be communicated via the RNP in the original
-	Interest message.
+	individual objects must be communicated (or inferred) via the Reflexive Name Prefix (RNP) in the Trigger Interest message.
 	</t>
 
 	<t>
-	We define a new typed name segment, identified by the <em>Reflexive Name Seqment</em>. The Reflexive Name Seqment MUST be the first (i.e. high order) name segment of any Reflexive Interest issued by a producer. In CCNx, the Reflexive Name Seqment type value will be registered in the IANA registry for <xref target="RFC8609"/> when approved (see <xref target="IANA" />).</t>
+	We define a new name segment type, the <em>Reflexive Name Segment</em> which holds the <em>Reflexive Name Prefix</em> in Reflexive Interest and Reflexive Data messages. The Reflexive Name Segment MUST be the first (i.e. high order) name segment of any Reflexive Interest issued by a producer. In CCNx, the Reflexive Name Segment type value will be registered in the IANA registry for <xref target="RFC8609"/> when approved (see <xref target="IANA" />).</t>
 
-	<t>	The value of the Reflexive Name Seqment is assigned by the consumer. The selected value MUST provide sufficient entropy to uniquely identify the issuing consumer for the duration of any outstanding Interest-Data exchange. Any scheme that meets the randomness and entropy requirements can suffice, but the consumer SHOULD choose a different random value for the value of each Reflexive Name Seqment it constructs because:</t>
+	<t>	The value of any Reflexive Name Prefix is assigned by the consumer. The selected value MUST provide sufficient entropy to uniquely identify the issuing consumer for the duration of any outstanding Trigger Interest-Trigger Data exchange. Any scheme that meets the randomness and entropy requirements can suffice, but the consumer SHOULD choose a different random value for the value of each Reflexive Name Prefix it constructs because:</t>
 	
 	<ol>
 	  <li>If there is insufficient randomness, a name collision on
@@ -664,10 +575,10 @@
 	</ol>
 	<t>A UUID, which is a randomly generated 128 bit quantity specified in <xref target="RFC9562"/>
 	<!-- , or a hash value signed by the consumer's secret key (see <xref target="signed_RNP"/>) -->
-	can be used for the value of the Reflexive Name Seqment.</t>
+	can be used for the value of the Reflexive Name Segment.</t>
 	
 	<t>
-	This initial name segment is In the Reflexive Interest is prepended to any object names the consumer wishes the producer to fetch. There
+	This initial name segment in the Reflexive Interest is prepended to any object names the consumer wishes the producer to fetch. There
 	may be more than one object needed by the producer for the
 	current Interest-Data interaction. There are three cases to consider:
 	</t>
@@ -685,13 +596,12 @@
 	    target="I-D.irtf-icnrg-flic">FLIC Manifest</xref>
 	    enumerating the suffixes that may be used by the producer
 	    to construct the necessary names. We distinguish this from the single object fetch
-	    in <xref target="single-reflexive-object" format="counter">case</xref> above because 
-	    the use of a Manifest implies multiple reflexive Interest/Data exchanges with the consumer. 
+	    in <xref target="single-reflexive-object" format="counter">case</xref> above because the use of a Manifest implies multiple Reflexive Interest/Data exchanges with the consumer. 
 	  </li>
 	</ol>
 	
 	<t>
-	A producer, upon receiving an Interest with a
+	A producer, upon receiving a Trigger Interest with a
 	Reflexive Name Prefix, may decide it needs to retrieve the
 	associated data object(s). It therefore can issue one or
 	more Reflexive Interests by appending the necessary name
@@ -708,20 +618,20 @@
 
 	<section anchor="reflexive-name-prefix-in-trigger-interest">
 	<name>How to represent/encode the Reflexive Name Prefix in the Trigger Interest</name>
-	<t>While the design is firm on how to represent the Reflexive Name Prefix in Reflexive Interests (and, by extension in the corresponding Reflexive Data response) we have studied two reasonable approaches to how the Reflexive Name Prefix (RNP) should be represented in Trigger Interests. These are:</t>
+	<t>While the design is firm on how to represent the Reflexive Name Prefix (RNP) in Reflexive Interests (and, by extension in the corresponding Reflexive Data response) by using a Reflexive Name Segment as the highedt-order name segment of the Reflexive Interest, we have studied two reasonable approaches to how the RNP should be represented in Trigger Interests. These are:</t>
 	<ol>
-		<li anchor="name-segment-for-TI">as a Reflexive Name Segment of the Trigger Interest Name. This is the same registered name segment type as used for Reflexive Interests, but as the last (i.e. <em>trailing</em>) name segment)</li>
+		<li anchor="name-segment-for-TI">as a Reflexive Name Segment of the Trigger Interest Name. This is the same registered name segment type as used for Reflexive Interests, but present as the last (i.e. <em>trailing</em>) name segment.</li>
 		<li anchor="separate-TLV-for-TI">as a separately defined and IANA registered message-level TLV in the Trigger Interest.</li>
 	</ol>
-	<t>There are tradeoffs in the choice of encoding. We outline the ones we are aware of below. Further experimentation with implementing the protocol an using it will inform a final decision on which approach to codify.</t>
+	<t>There are tradeoffs in the choice of encoding. We outline the ones we are aware of below. Further experimentation with implementing the protocol and using it will inform a final decision on which approach to codify.</t>
 	<aside><t><strong>Note: </strong>Approach <xref target="name-segment-for-TI"  format="counter"/> is currently the method implemented by the <xref target="Cefore">Cefore forwarder</xref></t></aside>
 	
 	<ul>
-	  <li>Approach <xref target="name-segment-for-TI"  format="counter"/> likely limits the ability to make use of caching for Trigger Data responses. This is because no two TIs from different consumers should carry the same name - at least within the lifetime of the TI-TD pair. It is unclear whether that is a significant problem - in many, perhaps most, applications where RI is needed (e.g., remote method invocation, access to paywalled content) the returned data is unlikely to be usefully cacheable (e.g., because it is encrypted with a subscriber-specific key/watermark).</li>
+	  <li>Approach <xref target="name-segment-for-TI"  format="counter"/> likely limits the ability to make use of caching for Trigger Data responses. This is because no two TIs from different consumers would carry the same name - at least within the lifetime of the TI-TD pair. It is however unclear whether that is a significant problem. In many, perhaps most, applications where RI is needed (e.g., remote method invocation, access to paywalled content) the returned Trigger Data is unlikely to be usefully cacheable (e.g., because it is encrypted with a subscriber-specific key/watermark).</li>
 	  
 	  <li>Approach <xref target="separate-TLV-for-TI" format="counter"/> requires a separate check to avoid incorrect interest aggregation, since trigger interests with different RNP TLVs should not be aggregated. Approach Approach <xref target="name-segment-for-TI"  format="counter"/> “just works” since the names are different and won’t be aggregated. However, this may be of little consequence since interest aggregation checks already require a forwarder to examine other optional Interest message fields such as <em>Interest Payload</em>. See <xref target="RFC8609"/> Section 2.4.2 for more information.</li>
 	  
-	  <li>Approach <xref target="name-segment-for-TI"  format="counter"/> doesn’t have to echo back the value in the finishing Trigger Data response, making it smaller. That might matter a bit in the sensor phone-home use case (<xref target="phone-home"/>), but it’s certainly not a big deal given that RNPs allocated according to the UUID scheme are 64 bits and hence unlikely to make that much of a difference.</li>
+	  <li>Approach <xref target="name-segment-for-TI"  format="counter"/> doesn’t have to echo back the value in the finishing Trigger Data response, making it smaller. That might matter a bit in the sensor phone-home use case (<xref target="phone-home"/>), but it’s likely not a big deal given that RNPs allocated according to the UUID scheme are 64 bits and hence unlikely to make that much of a difference.</li>
 	</ul>
 	
 	</section>
@@ -741,7 +651,7 @@ RI_3: ccnx:/RNP=RNP1/Chunk=2  EndChunkNumber=2
 	]]></artwork>
     </figure>
 	
-	<t>RI-PIT MAY include a chunk number to the RNP, while RI-PIT(tentative) does not. Like an ordinary PIT entry, RI-PIT is erased whenever the corresponding RD is forwarded through the downstream face, while RI-PIT(tentative) is erased when the RI-PIT(tentative) lifetime expires or Trigger Data (TD) is received and forwarded at the forwarder.</t>
+	<t>The RI-PIT entry MAY include a chunk number to the RNP, while a tentative RI-PIT entry does not. Like an ordinary PIT entry, RI-PIT is erased whenever the corresponding RD is forwarded through the downstream face, while a tentative RI-PIT entry is erased when the TI-PIT lifetime expires or Trigger Data (TD) is received and forwarded at the forwarder.</t>
 
 		<aside><t><strong>Note: </strong>The above likely needs some adjustment when we sort out the general handling on chunking for both regular and reflexive interests. Stay tuned.</t></aside>
 		
@@ -751,7 +661,7 @@ RI_3: ccnx:/RNP=RNP1/Chunk=2  EndChunkNumber=2
 	</section>
 	
 	<section><name>Recursive Reflexive Interest invocation</name>
-		<t>There is no explicit prohibition in this version of the specification to use a Reflexive Interest as a Trigger Interest to recursively create a more than 3-way handshake protocol. It is not yet clear if there are any compelling use cases for this or if there are undiscovered hazards by permitting it. However, we are confident that we do have sufficient protections against resource depletion attacks that could be attempted through this technique.</t>
+		<t>There is no explicit prohibition in this version of the specification to use a Reflexive Interest as a Trigger Interest to recursively create a multi-way handshake protocol. It is not yet clear if there are any compelling use cases for this or if there are undiscovered hazards by permitting it. However, we are confident that we do have sufficient protections against resource depletion attacks that could be attempted through this technique.</t>
 	</section>
 	
 <!-->	<section anchor="signed_RNP"><name>Signed RNP</name>
@@ -768,19 +678,9 @@ RI_3: ccnx:/RNP=RNP1/Chunk=2  EndChunkNumber=2
 
 	<section anchor="consumer-operation"><name>Consumer Operation</name>
 	<t>
-	A consumer wishing to employ Reflexive Forwarding
-	MUST include a Reflexive Name Prefix (RNP) TLV in the Interest, which causes it
-	to be treated as a Trigger Interest by Forwarders and Producers. The producer can
-	subsequently craft Reflexive Interests with names using the RNP as the first name segment. Upon receiving a Reflexive Interest (e.g. RI1 in 
-	<!--<xref target="overall-message-flow"/> and -->
-	<xref target="overall-message-flow-ccnx"/>) from a producer in response
-	to the Interest whose first name segment is the RNP supplied
-	earlier, the consumer SHOULD perform a name match against the
-	object specified in the RI, and return that
-	object to the producer in a conventional Data message,
-	(e.g. RD1 in 
-	<!--<xref target="overall-message-flow"/> and -->
-	<xref target="overall-message-flow-ccnx"/>).
+	A consumer wishing to employ Reflexive Forwarding MUST include a Reflexive Name Prefix (RNP) in the Interest, which causes it to be treated as a Trigger Interest by Forwarders and Producers. The producer can subsequently craft Reflexive Interests with names using the RNP as a Reflexive Name Segment. Upon receiving a Reflexive Interest (e.g. RI in <xref target="overall-message-flow-ccnx"/>) from a producer in response to the Interest whose first name segment is the RNP supplied
+	earlier, the consumer SHOULD perform a full name match against the object specified in the RI, and return that object to the producer in a conventional Data message,
+	(e.g. RD in	<xref target="overall-message-flow-ccnx"/>).
 	</t>
     
 	</section>
@@ -788,7 +688,7 @@ RI_3: ccnx:/RNP=RNP1/Chunk=2  EndChunkNumber=2
 
 	<section anchor="producer-operation"><name>Producer Operation</name>
 
-	<t>A producer that has received an Interest with a Reflexive Name Prefix (RNP) MUST keep the supplied RNP from the received Interest for subsequent (optional, depending on application semantics) Reflexive Interest sending.</t>
+	<t>A producer that has received an Trigger Interest with a Reflexive Name Prefix (RNP) keeps  the supplied RNP from the Trigger Interest for subsequent (optional, depending on application semantics) Reflexive Interest sending.</t>
 	
 	<t>When sending a Reflexive Interest back to the consumer, the
 	producer MUST construct a corresponding Interest name based on
@@ -800,11 +700,12 @@ RI_3: ccnx:/RNP=RNP1/Chunk=2  EndChunkNumber=2
     <t>The forwarder performs the following operations.</t>  
 	<ol>
 	<li>
-	<t>Upon receiving an Interest containing a Reflexive Name Prefix (RNP) TLV a forwarder MAY check its CS for a matching Data Object. if a match is found, the corresponding Data is returned and the Reflexive Interest is considered satisfied. If no match is found, proceed with the following steps.</t>
+	<t>Upon receiving an Interest containing a Reflexive Name Segment as its highest-order name segment, the Interest is interpreted as a Reflexive Interest. A forwarder MAY check its CS for a matching Data Object. If a match is found, the corresponding Data is returned and the Reflexive Interest is considered satisfied. If no match is found, proceed with the following steps.</t>
 
-	<t><strong>[HA]</strong> If Trigger Data is cached in CS, the next Trigger Interest whose name is the same of the previous one may not reach to the producer, and hence the producer cannot send Reflexive Interest to make the consumer push the data. It is not a wrong behavior because caching the TD implies that the pushed data (RD) was previously sent to the producer and it is not necessary to send the same RD to the producer again. However, it may be an unexpected behavior for the consumer because the consumer cannot push the data to the publisher until the caches in the network are perfectly expired/removed. This explanation (attention) must be clearly mentioned here or some place.</t>
+<!-->	<t><strong>[HA]</strong> If Trigger Data is cached in CS, the next Trigger Interest whose name is the same of the previous one may not reach to the producer, and hence the producer cannot send Reflexive Interest to make the consumer push the data. It is not a wrong behavior because caching the TD implies that the pushed data (RD) was previously sent to the producer and it is not necessary to send the same RD to the producer again. However, it may be an unexpected behavior for the consumer because the consumer cannot push the data to the publisher until the caches in the network are perfectly expired/removed. This explanation (attention) must be clearly mentioned here or some place.</t>
+-->
 
-	<t><strong>Note:</strong> Given that reflexive interests initiate exchanges constrained by the Interest Lifetime of the enclosing Interest/Data exchange, the value of caching the Data responses in forwarders is for short-term recovery from lost packets as opposed to optimizing longer term caching gain. For this reason we avoid mandating or strongly recommending the CS check for reflexive interests.</t>
+	<t><strong>Note:</strong> Given that reflexive interests initiate exchanges constrained by the Interest Lifetime of the enclosing Trigger Interest/Data exchange, the value of caching the Reflexive Data responses in forwarders is for short-term recovery from lost packets as opposed to optimizing longer term caching gain. For this reason we avoid mandating or strongly recommending the CS check for reflexive interests.</t>
 	</li>
 
 	<li>
@@ -812,18 +713,17 @@ RI_3: ccnx:/RNP=RNP1/Chunk=2  EndChunkNumber=2
 	</li>
 
 	<li>
-	The forwarders MUST check that the high-order Name segment of the Interest is of
-	type Reflexive Name Seqment. If not, while this could strictly speaking be
+	The forwarder MUST check that the high-order Name segment of the Interest is of
+	type Reflexive Name Segment. If not, while this could strictly speaking be
 	considered an error, the forwarder SHOULD simply process the Interest as a normal
 	non-reflexive Interest and skip the steps below. A match
 	indicates that this is a Reflexive Interest corresponding to
-	the original consumer to producer Interest, so execute the
-	following steps.
+	the original Trigger Interest, so execute the following steps.
 	</li>
 	  	
 	<li>
 	Create a new PIT entry for the Reflexive Interest (if
-	resources are sufficient). 
+	resources are sufficient). In the case of <xref target="Cefore"/> this is accomplished by cloning the new PIT entry from the tentative PIT entry created  earlier by receipt of the Trigger Interest.	
 <!--	Also, regarding NDN, see <xref target="PIT-sharding"/> for how PIT shard interacts with
 	the location and creation of PIT entries on high-speed forwarders. -->
 	</li>
@@ -834,8 +734,8 @@ RI_3: ccnx:/RNP=RNP1/Chunk=2  EndChunkNumber=2
 	</li> -->
 	  	
 	<li>
-	Look up the ingress face from the originating Interest's PIT
-	entry, forward the Reflexive Interest on this face.
+	Look up the ingress face from the originating Trigger Interest's PIT
+	entry, and forward the Reflexive Interest on this face. In the case of <xref target="Cefore"/> the face to forward on would have already been populated in the Reflexive Interest's PIT entry.
 	</li>
 	</ol>
     
@@ -855,25 +755,25 @@ RI_3: ccnx:/RNP=RNP1/Chunk=2  EndChunkNumber=2
     	It has separate code paths for minimal forwarder operations and those needed by high-performance forwarders as is
     	further discussed in <xref target="PIT-sharding"/>.</t>
     	
-	<section><name>Processing of a Trigger Interest containing a Reflexive Name Prefix TLV</name>
+	<section><name>Processing of a Trigger Interest containing a Reflexive Name Prefix</name>
 		<sourcecode type="pseudocode">
 Create PIT entry for Interest;
 Optionally create a tentative PIT entry for any potential Reflexive Interests 
-     expected to match the RNP (or RNPs) in the Trigger Interest;
+     expected to match the RNP in the Trigger Interest;
 Forward Interest upstream;
 			</sourcecode>
 			</section>
     	
 			<section><name>Processing of a Reflexive Interest</name>
 			<sourcecode type="pseudocode">
-Use RNP of Interest's Name TLV to lookup original Interest PIT entry;
+Use Reflexive Name Segment of Reflexive Interest's Name to look up the Trigger Interest PIT entry;
 
 IF PIT entry of original Interest not is found
     Issue an Interest Return with "No Route" error 
          back to the producer;
 ELSE
     Create PIT entry for Reflexive Interest 
-    (or optionally modify the tentative RI PIT entry that was created together 
+    (or optionally clone it from the tentative TI PIT entry that was created together 
      with the Trigger Interest PIT entry);
     Process as a normal Interest;
 RETURN
@@ -888,7 +788,7 @@ RETURN
     A consumer that wishes to use this scheme MUST utilize one of the
     reflexive naming options defined in <xref target='naming'/> and
     include it in the corresponding Interest message. The Reflexive
-    Name Prefix TLV <em>and</em> the full name of the requested data object
+    Name Prefix <em>and</em> the full name of the requested data object
     (that identifies the producer) identify the common state shared by
     the consumer and the producer. When the producer responds by
     sending Interests with a Reflexive Name Prefix, the original
@@ -1035,17 +935,17 @@ RETURN
 	Internet or indirectly through the use of some form of
 	application-layer gateway), the IoT device need only act as a
 	consumer to initiate commuhication. When it has data to provide, it issues a
-	"phone-home" Interest message to a pre-configured rendezvous
+	"phone-home" Trigger Interest message to a pre-configured (or discovered) rendezvous
 	name (e.g. an application-layer gateway or ICN <xref
 	target="Chen2015">Repo</xref>) and provides a reflexive name
-	prefix TLV for the data it wishes to publish. The target
-	producer may then issue the necessary reflexive Interest
+	prefix for the data it wishes to publish. The target
+	producer may then issue the necessary Reflexive Interest
 	message(s) to fetch the data. Once fetched, validated, and
-	stored, the producer then responds to the original Interest
+	stored, the producer then responds to the Trigger Interest
 	message with a success indication, possibly containing a Data
 	object if needed to allow the originating device to modify its
 	internal state. Alternatively, the producer might choose to
-	not respond and allow the original Interest to time out,
+	not respond and allow the Trigger Interest to time out,
 	although this is NOT RECOMMENDED except in cases where the
 	extra message transmission bandwith is at a premium compared
 	to the persistence of stale state in the forwarders. We note
@@ -1055,7 +955,7 @@ RETURN
 
       <t>
 	<xref target="phonehome-message-flow"/> depicts this
-	interaction with the (optional) D1 message.
+	interaction with the (optional) TD message.
 	<!-- See <xref target="overall-message-flow"/> for the details of the general Reflexive Forwarding interaction.-->
       </t>
       
@@ -1064,11 +964,10 @@ RETURN
 	<artwork type="ascii-art" src="phonehome.txt"/>
 	<artwork type="ascii-art">
     Legend:
-    I1: Trigger Interest #1 containing the Reflexive Name Prefix TLV
-    D1: Data message (OPTIONAL), finalizing interaction
+    TI: Trigger Interest containing the Reflexive Name Prefix
     RI1: Reflexive Interest requesting the IoT data
     RD1: Data message, answering RI, returning IoT data object
-    D1: (optional) Data answering I1
+    TD: (optional) Data answering I1
 	</artwork>
       </figure>
 
@@ -1169,7 +1068,7 @@ RETURN
 	<name>Interactions with Input Processing of Interest and Data packets</name>
        <t>Reflexive Interests are designed specifically to be no
       	    different from any other Interest other than the use of
-      	    the Reflexive Name Seqment type as their
+      	    the Reflexive Name Segment type as their
       	    high-order name segment. This means that a forwarder
       	    does not have to have special handling in terms of
       	    creation, and destruction, and other Interest processing
@@ -1179,17 +1078,11 @@ RETURN
       	    Interests not needed in the absence of reflexive
       	    forwarding. The most significant requirements are:</t>
     	<ul>
-      	<li>
-	    In order to locate the corresponding PIT entry for the
-	    original Interest, the forwarder's packet input processing
-	    needs to be able to efficiently locate the PIT entry of the original 
-	    Interest that contained the RNP TLV.
-	  </li>
-      <li>
-	    Ensure that the high order name segment of the Reflexive
-	    Interest matches the RNP stored in that PIT entry.
-	  </li>
-      </ul>
+      	<li>In order to locate the matching RNP from the Trigger Interest, the forwarder's packet input processing needs to be able to efficiently access a PIT entry storing the RNP of the corresponding Trigger Interest.</li>
+      	
+      	<li>Ensure that the highest order name segment of the Reflexive
+	    Interest is a Reflexive Name Segment that matches the RNP stored in that PIT entry.</li>
+      	</ul>
       	
     	<t>There are a few additional considerations to highlight for
     	high-speed forwarders however; these are discussed in the
@@ -1197,7 +1090,7 @@ RETURN
  	
       	<t anchor="PIT-sharding">In order to achieve forwarding scalability, high speed
       	forwarders need to exploit available parallelism in both CPU
-      	(through multiple cores) and memory (through multiport DRAM
+      	(through multiple cores) and memory (through multiport DRAM)
       	and limiting accesses to both DRAM and L3 caches). One
       	commonly-used technique is <em>PIT sharding</em>, where the
       	forwarder-global PIT is partitoned among cores such that all
@@ -1212,9 +1105,9 @@ RETURN
       	accesses other than to bytes of the input packet.</t>
       	
       	<t>Straightforward input name hashing to achieve a sharded PIT
-      	has one potentially undesirable side effect: the original
-      	Interest containing the Reflexive Name Prefix TLV and any
-      	resultant reflexive Interests issued by the producer will likely hash
+      	has one potentially undesirable side effect: the Trigger
+      	Interest containing the Reflexive Name Prefix and any
+      	resultant Reflexive Interests issued by the producer will likely hash
       	to different PIT shards, making any pointers that need to be
       	traversed across shards or cross-shard updates expensive,
       	possibly dramatically so. One could either optimize those
@@ -1237,7 +1130,7 @@ RETURN
       		exchanges, the total latency for the original
       		Interest-Data exchange is inflated, potentially by
       		multiple RTTs. It is difficult for a consumer to
-      		predict the inflation factor when issuing the original
+      		predict the inflation factor when issuing the Trigger
       		Interest, and hence there can be a substantial hazard
       		of that Interest lifetime expiring before completion
       		of the full multi-way exchange. This can result in
@@ -1250,16 +1143,16 @@ RETURN
       		superior alternative technique, it is RECOMMENDED that
       		all forwarders implement the following algorithm.</t>
      	      	
-      		<t>If and when a reflexive Interest arrives matching
-      		the original Interest's PIT entry, the forwarder examines the
-      		Interest lifetime of the arriving reflexive
+      		<t>If and when a Reflexive Interest arrives matching
+      		the Trigger Interest's RNP, the forwarder examines the
+      		Interest lifetime of the arriving Reflexive
       		Interest. Call this value <em>IL<sub>r</sub></em>. The
       		forwarder computes MAX(<em>IL<sub>t</sub>,
       		(IL<sub>r</sub> * 1.5)</em>), and replaces
       		<em>IL<sub>t</sub></em> with this value. This in
       		effect ensures that the remaining Interest lifetime of
-      		the original Interest accounts for the additional 1.5
-      		RTTs that may occur as a result of the reflexive
+      		the Trigger Interest accounts for the additional 1.5
+      		RTTs that may occur as a result of the Reflexive
       		Interest-Data exchange.</t>
       		
 		<aside><t>We note that this is not unduly
@@ -1272,7 +1165,7 @@ RETURN
       		
       		<t anchor="reflexive-producer-hazard">While the above
       		approach of inflating the interest lifetime of the
-      		original Interest to accommodate the additional RTTs
+      		Trigger Interest to accommodate the additional RTTs
       		of reflexive Interest-Data exchanges avoids the
       		timeout problem, this does introduce a new
       		vulnerability that must be dealt with. A Producer,
@@ -1283,12 +1176,12 @@ RETURN
       		the enclosing interaction (there is no "cancel
       		Interest" function in either NDN nor CCNx). To
       		eliminate this hazard, if the consumer rejects a
-      		reflexive interest with a T_RETURN_PROHIBITED error,
+      		Reflexive Interest with a T_RETURN_PROHIBITED error,
       		the forwarder(s), in addition to satisfying the
       		corresponding PIT entry, MUST also delete the
-      		RNP from the original Interest's PIT entry, thereby preventing any
-      		further reflexive Interests from reaching the
-      		consumer. This allows the enclosing Interest-Data
+      		RNP from the Trigger Interest's PIT entry, thereby preventing any
+      		further Reflexive Interests from reaching the
+      		consumer. This in turn allows the enclosing Interest-Data
       		exchange to either time out or be correctly ended with
       		a Data message or Interest Return from the
       		Producer.</t>
@@ -1301,31 +1194,31 @@ RETURN
       	<t>As with numerous other situations where multiple Interests
       	for the same named object arrive containing different
       	parameters (e.g. Interest Lifetime, QoS, payload hash) the
-      	same phenomenon occurs for the reflexive Name Prefix TLV. If
-      	Interests with different reflexive name prefix TLVs collide,
+      	same phenomenon occurs for the Reflexive Name Prefix. If
+      	Trigger Interests with different Reflexive Name Prefixes collide,
       	the forwarder MUST NOT aggregate these Interest messages and
       	instead MUST create a separate PIT entry for each.</t>
       	
       	<t>Forwarders supporting multi-path forwarding may of course
-      	exploit this capability for Interests with identical reflexive
-      	name prefix TLVs, like any other Interests. There are two
+      	exploit this capability for Trigger Interests with identical Reflexive
+      	Name Prefixes, like any other Interests. There are two
       	sub-cases of multi-next hop behavior; regular multi-path
       	(where the split traffic reconverges further upstream) and
       	multi-destination (where it doesn't and the Interest reaches
       	multiple producers).</t>
 
 	<t>For multi-path, since the Interests that converge upstream
-	carry identical reflexive Interest name TLVs, they will get
+	carry identical Reflexive Name Prefixes, they will get
 	aggregated. The forwarder might, just as for any other
 	Interest, decide to either do single or multi-path forwarding
-	of that reflexive Interest. If sent multi-path in parallel,
+	of that Interest. If sent multi-path in parallel,
 	these also will reconverge on the reverse path and get
 	aggregated.</t>
 
-	<t>For multi-destination, reflexive Interests might get issued
-	by multiple producers, but they will carry the same reflexive
-	name prefix and hence be forwarded using the ingress face of the same
-	original Interest PIT entry until reaching the join point, at which they will get
+	<t>For multi-destination, Reflexive Interests might get issued
+	by multiple producers, but they will carry the same Reflexive
+	Name Segment and hence be forwarded using the ingress face of the same
+	Trigger Interest PIT entry until reaching the join point, at which they will get
 	aggregated and thus handled identically to any other
 	Interest(s) subject to aggregation.</t>
 
@@ -1338,9 +1231,9 @@ RETURN
 		<section><name>Data objects returned by the consumer to reflexive name Interests arriving from a producer</name>
     	
     	<t>The Data objects returned to the producer in response to a
-    	reflexive Interest are normal CCNx/NDN data objects. The object returned
-    	in response to a reflexive Interest is named with its hash as the trailing
-    	segment of the reflexive Interest name, and hence the scope
+    	Reflexive Interest are normal CCNx/NDN data objects. The object returned
+    	in response to a Reflexive Interest is named with its hash as the trailing
+    	segment of the Reflexive Interest Name, and hence the scope
     	of the object is under most circumstances meaningful only for
     	the duration of the enclosing Interest-Data interaction. This
     	property is ideal for naming and securing data that is "part
@@ -1351,10 +1244,10 @@ RETURN
     	which describes how to provide globally-named objects using
     	encapsulation). In general, the consumer should use the
     	following guidelines in creating Data messages in response to
-    	reflexive Interest messages from the producer.</t>
+    	Reflexive Interest messages from the producer.</t>
     		
     		<ol type="(%c)">
-    			<li>Set the recommended cache time (T_CACHETIME) either to zero, or a value no greater than the Interest lifetime (T_INTLIFE) of the original Interest message.</li>
+    			<li>Set the recommended cache time (T_CACHETIME) either to zero, or a value no greater than the Interest lifetime (T_INTLIFE) of the Trigger Interest message.</li>
     			<li>Set the payload type (T_PAYLDTYPE) according to the type of object being returned (e.g. object, link, manifest)</li>
     			<li>Set the expiry time (T_EXPIRY) to a value greater than <em>now</em>, and less than or equal to the <em>now</em> + Interest lifetime (T_INTLIFE) of the original Interest message.</li>
     		</ol>
@@ -1362,7 +1255,7 @@ RETURN
 		</section>
     	
 		<section><name>Terminating unwanted reflexive Interest exchanges</name>
-		<t>A consumer may wish to stop receiving reflexive Interests due to possible errors or malicious behavior on the part of the producer. Therefore, if the consumer receives an unwanted reflexive Interest, it SHOULD reject that interest with a T_RETURN_PROHIBITED error (See section 10.3.6 of <xref target="RFC8609"/> ). This will provoke the forwarders to prevent further reflexive Interests from reaching the consumer, as described above in <xref target="reflexive-producer-hazard"/>.</t>
+		<t>A consumer may wish to stop receiving Reflexive Interests due to possible errors or malicious behavior on the part of the producer. Therefore, if the consumer receives an unwanted Reflexive Interest, it SHOULD reject that interest with a T_RETURN_PROHIBITED error (See section 10.3.6 of <xref target="RFC8609"/> ). This will provoke the forwarders to prevent further reflexive Interests from reaching the consumer, as described above in <xref target="reflexive-producer-hazard"/>.</t>
 		</section>
     	
 		<section><name>Interactions with caching</name>
@@ -1376,7 +1269,7 @@ RETURN
 	  Forwarders MAY still cache reflexive Data objects for
 	  retransmissions within a transactions, but they MUST invalidate or remove
 	  them from the content store when they forward the final Data
-	  message answering the original Interest.
+	  message answering the Trigger Interest.
 	  </t>
 		</section>
 	</section>
@@ -1386,7 +1279,7 @@ RETURN
 	<t>Producers receiving an Interest with a Reflexive Name
 	Segment, MAY decide to issue Reflexive Interests for the corresponding
 	Data objects. All Reflexive Interest messages that a producer
-	sends MUST be sent over the face that the original Interest
+	sends MUST be sent over the face that the Trigger Interest
 	was received on. </t>
 
 	</section>
@@ -1394,12 +1287,12 @@ RETURN
 
 <section anchor="Ops"><name>Operational Considerations</name>
 	
-	<t>This extension represents a substantial enhancement to the
+	<t>Reflexive forwarding represents a substantial enhancement to the
 	CCNx/NDN protocol architecture and hence has important forward
 	and backward compatibility consequences. The most important of
 	these is that correct operation of the scheme requires an
 	unbroken chain of forwarders between the consumer and the
-	desired producer that support the Reflexive Name Prefix TLV and the
+	desired producer that support Reflexive Name Prefixes and the
 	corresponding forwarder capabilities specified in <xref
 	target="forwarder-operation"/>. When this invariant is not
 	satisfied, some means is necessary to detect and hopefully
@@ -1411,12 +1304,12 @@ RETURN
 	error by getting a "no route to destination" error when trying
 	to send an Interest to a reflexive name. This will catch the
 	error, but only after forwarding resources are tied up and the
-	producer has done some work on the original Interest
+	producer has done some work on the Trigger Interest
 	message. Further, the producer would need a bit of smarts to
-	determine that this is a permanent error and not a transient
+	determine that this is a permanent error and not a transient error
 	to be retried. In order for the consumer to attempt recovery,
 	there might be a need for some explicit error returned for the
-	original interest to tell the consumer what the likely problem
+	Trigger interest to tell the consumer what the likely problem
 	is. This approach does not enable an obvious recovery path for
 	the consumer either, since if the producer cannot easily detect the error, 
 	the consumer has no way to know if a retry has any chance of succeeding.</t>
@@ -1424,8 +1317,8 @@ RETURN
 	<t>A second approach is to bump the CCNx/NDN protocol version
 	to explicitly indicate the lack of compatability. Such
 	Interests would be rejected by forwarders not supporting these
-	protocol extensions. A consumer wishing to use the Reflexive
-	Name Prefix TLV would use the higher protocol version on those
+	protocol extensions. A consumer wishing to use Reflexive
+	Name Prefixes would use the higher protocol version on those
 	Interest messages (but could of course continue to use the
 	current version number on other Interest messages). This is a
 	big hammer, but may be called for in this situation
@@ -1444,7 +1337,7 @@ RETURN
 	<t>A third option is to, as a precondition to utilizing the
 	protocol in a deployment, create and deploy a neighbor
 	capability exchange protocol which will tell a downstream
-	forwarder if the upstream can handle the new TLV. This might
+	forwarder if the upstream can handle the new protocol elements. This might
 	avoid the large hammer of updating the protocol version, but
 	of course this puts a pretty strong dependency on somebody
 	actually designing and publishing such a protocol! On the
@@ -1457,8 +1350,8 @@ RETURN
 <section anchor="encoding"><name>Mapping to CCNx and NDN packet encodings</name>
 
 	<section anchor="CCNx-encoding"><name>Packet encoding for CCNx</name>
-	<t keepWithNext="true">For CCNx <xref target="RFC8609"/>, this specification defines one new Name Segment type for the Reflexive Name Prefix TLV.</t>
-	<table><name>Reflexive Name Seqment</name>
+	<t keepWithNext="true">For CCNx <xref target="RFC8609"/>, this specification defines one new Name Segment type for the Reflexive Name Prefix.</t>
+	<table><name>Reflexive Name Segment</name>
 	<thead>
 		<tr>
 	  		<th align="center">Abbrev</th>
@@ -1469,13 +1362,13 @@ RETURN
 	<tbody>
 		<tr>
 	  		<td>T_REFLEXIVE_NAME</td>
-	  		<td>Reflexive Name Seqment</td>
+	  		<td>Reflexive Name Segment</td>
 			<td>Name segment to use as name prefix in Reflexive Interest Messages</td>
 		</tr>
 	</tbody>
 	</table>
 
-	<figure anchor="reflexive-name-encoding"><name>Reflexive Name Prefix TLV</name>
+	<figure anchor="reflexive-name-encoding"><name>Reflexive Name Prefix</name>
 	<artwork align="center"><![CDATA[
                      1                   2                   3
  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -1488,16 +1381,36 @@ RETURN
 	</figure>
 
 	<dl>
-	   <dt>Type:</dt>
-	   <dd>Format of the Value field. For the Reflexive Name Prefix TLV, the type value MUST be T_REFLEXIVE_NAME in the current specification. 16 bit length.</dd>
+	   <dt><strong>Type:</strong></dt>
+	   <dd>Format of the Value field. For the Reflexive Name Segment, the type value MUST be T_REFLEXIVE_NAME in the current specification. 16 bit length.</dd>
 
-	   <dt>Length:</dt>
+	   <dt><strong>Length:</strong></dt>
 	   <dd>Length of Value field in octets. 16 bit length.</dd>
 
-	   <dt>Reflexive Name Prefix:</dt>
+	   <dt><strong>Reflexive Name Prefix</strong></dt>
 	   <dd>Reflexive Name Prefix (RNP) assigned by consumer. Variable length.</dd>
 	</dl>
 
+	<t>For Trigger Interests, if approach <xref target="separate-TLV-for-TI" format="counter"/> from <xref target="reflexive-name-prefix-in-trigger-interest"/> is chosen, then a second registered type is needed. The same format as used above for the Name Segment Type will be registered by IANA as an Interest Message TLV.</t>
+	
+	<table><name>Reflexive Name Prefix TLV</name>
+	<thead>
+		<tr>
+	  		<th align="center">Abbrev</th>
+	  		<th align="center">Name</th>
+			<th align="center">Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+	  		<td>T_REFLEXIVE_NAME_PREFIX</td>
+	  		<td>Reflexive Name Prefix TLV</td>
+			<td>Interest message field to use as name prefix in Trigger Interest Messages</td>
+		</tr>
+	</tbody>
+	</table>
+
+	
 	</section>
     
 	<section anchor="NDN-encoding"><name>Packet encoding for NDN</name>
@@ -1509,7 +1422,7 @@ RETURN
 		</section>
           	
 		<section><name>Reflexive Name Prefix TLV</name>
-			<t>The Reflexive Name Prefix TLV needs to be added to the NDN Interest packet format. We suggest using <xref target="RFC9562"/>, hence something like:</t>
+			<t>For Trigger Interests, if approach <xref target="separate-TLV-for-TI" format="counter"/> from <xref target="reflexive-name-prefix-in-trigger-interest"/> is chosen, The Reflexive Name Prefix TLV needs to be added to the NDN Interest packet format. We suggest using <xref target="RFC9562"/>, hence something like:</t>
 	      
 			<table><name>Proposed Reflexive Name Prefix TLV for NDN Interest Packet</name>
 			<tbody>
@@ -1526,11 +1439,17 @@ RETURN
     
 <section anchor="IANA"><name>IANA Considerations</name>
 
-	<t>As per <xref target="RFC8126" />, this section makes an assignment in one existing registry in the "Content-Centric Networking (CCNx)" registry group. The registration procedure is "RFC Required", which requires only that this document be published as an RFC.</t>
+	<t>As per <xref target="RFC8126" />, this section makes an assignment in two existing registries in the "Content-Centric Networking (CCNx)" registry group. The registration procedure is "RFC Required", which requires only that this document be published as an RFC.</t>
 
-	<section anchor="sec.iana" title="CCNx Name Segment Type Registry">
-	<t>As shown in <xref target='CCNx-encoding' />, this document defines one message type, T_REFLEXIVE_NAME, whose suggested value is %x0005.</t>
+	<section anchor="sec.iana.name-segment" title="CCNx Name Segment Type Registry">
+	<t>As shown in <xref target='CCNx-encoding' />, this document defines Name Segment type, T_REFLEXIVE_NAME, whose suggested value is %x0005.</t>
 	</section>
+	
+	<section anchor="sec.iana.name-prefix-tlv" title="CCNx Validation-Dependent Data Types Registry">
+	<t>As shown in <xref target='CCNx-encoding' />, this document defines one CCNx Validation-Dependent Data Type, T_REFLEXIVE_NAME, whose suggested value is %x0008.</t>
+	
+	</section>
+
 
 </section>
     
@@ -1557,7 +1476,7 @@ RETURN
       	
       	<li>In many scenarios, consumers are forced to also act as
       	producers so that data may be fetched by either a particular,
-      	or arbitrary other party. The means the consumer must arrange
+      	or arbitrary other party. Therefore the consumer must arrange
       	to have a routable name prefix and that prefix be disseminated
       	by the routing protocol or other means. This represents both a
       	privacy hazard (by revealing possible important information
@@ -1569,7 +1488,7 @@ RETURN
       	designs a consumer wishing a producer to communicate back must
       	inform the producer of what (globally routable) name to
       	use. This gives the consumer a convenient means to mount a
-      	variety of reflection attacks by enlisting the producer to
+      	variety of reflection attacks by recruiting the producer to
       	send Interests to desired victims.</li>
       </ul>
       
@@ -1628,7 +1547,7 @@ RETURN
       	of privacy tradeoffs, nor seem to introduce additional
       	hazards. In fact, the privacy exposures are confined to the
       	reverse path of forwarders from the producer to the consumer,
-      	through which the original Interest forwarding may have
+      	through which the original Trigger Interest forwarding may have
       	already exposed names on path. Similar name privacy techniques
       	to those cited above may be equally applied to the names in
       	reflexive Interests.</t>
@@ -1669,7 +1588,7 @@ RETURN
 	<xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.9531.xml"/>	
 	<!--		<xi:include "reference.I-D.irtf.icnrg.mapme.xml"?> -->
 	<xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.irtf-icnrg-flic.xml"/>
-	<xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.mosko-icnrg-ccnxchunking.xml"/>
+	<xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.irtf-icnrg-ccnxchunking.xml"/>
 	
 	<reference anchor="Krol2018" target="https://conferences.sigcomm.org/acm-icn/2018/proceedings/icn18-final9.pdf">
 	  <front>
@@ -1951,7 +1870,7 @@ RETURN
 	  forwarder were lacking sufficient PIT resources to process the Interest message.</li>
 		<li>Those FIB entries are queried whenever an Interest
 	  message arrives whose first name segment is of the type
-	  <em>Reflexive Name Seqment (RNP)</em></li>
+	  <em>Reflexive Name Segment (RNP)</em></li>
 		<li>The FIB entry gets removed eventually, after the
 	  corresponding Data message has been forwarded. One option
 	  would be to remove the FIB directly after the Data message
@@ -2039,7 +1958,7 @@ RETURN
    https://github.com/nflsjxc/Reflexive-Forwarding-NDN-demo/tree/master. It
    differs from this specification in the following ways:
  </t>
- <section><name>Reflexive Name Seqment</name>
+ <section><name>Reflexive Name Segment</name>
  <t>
    Currently Reflexive Name Component is the suffix instead of the
    prefix for the Reflexive Names. This is easier for prefix matching

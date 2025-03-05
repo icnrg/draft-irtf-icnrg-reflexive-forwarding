@@ -1,0 +1,92 @@
+<!-- 
+		  <artwork align="center"><![CDATA[
++----------+           +-----------+             +----------+
+| Consumer |           | Forwarder |             | Producer |
++----------+           +-----------+             +----------+
+    |                        |                          |
+    | TI                     |                          |
+    |----------------------->|                          |
+    |    +-----------------\ |                          |
+    |    | record fullname |-|                          |
+    |    | in TI-PIT(TI)   | |                          |
+    |    +-----------------+ |                          |
+    |                        | +--------------------\   |
+    |                        |-| add RNP to tentative   |
+    |                        | | RI-PIT(RI)         |   |
+    |                        | +--------------------+   |
+    |                        |                          |
+    |                        | TI                       |
+    |                        |------------------------->|
+    |                        |                          | +-----------\
+    |                        |                          |-| check     |
+    |                        |                          | | prefix,   |
+    |                        |                          | | create    |
+    |                        |                          | | Reflexive |
+    |                        |                          | | Interest  |
+    |                        |                          | | state     |
+    |                        |                          | +-----------+
+    |                        |                          |
+    |                        |                       RI |
+    |                        |<-------------------------|
+    |                        | +----------------------\ |
+    |                        |-| check RNP match      | |
+    |                        | | of RI-PIT(tentative)(RI),| |
+    |                        | | create RI-PIT(RI),   | |
+    |                        | | forward RI           | |
+    |                        | +----------------------+ |
+    |                        |                          |
+    |                     RI |                          |
+    |<-----------------------|                          |
+    |                        |                          |
+    |                        |                          |
+    | RD                     |                          |
+    |----------------------->|                          |
+    |                        | +---------------------\  |
+    |                        |-| satisfy RI-PIT(RI), |  |
+    |                        | | forward RD via      |  |
+    |                        | | RI-PIT(RI)          |  |
+    |                        | +---------------------+  |
+    |                        |                          |
+    |                        | RD                       |
+    |                        |------------------------->|
+    |                        | +--------------------\   |
+    |                        |-| remove RI-PIT(RI)  |   |
+    |                        | +--------------------+   |
+    .                        .                          .
+    .                        .                          .
+    Chunks denoted by a serial counter incrementing by 1 
+    for each contiguous chunk may be retrieved by
+    multiple RIs and provided with RDs from the Consumer
+    .                        .                          .
+    .                        .                          .
+    |                        |                          | +------------\
+    |                        |                          |-| all        |
+    |                        |                          | | parameters |
+    |                        |                          | | received,  |
+    |                        |                          | | answer TI  |
+    |                        |                          | +------------+
+    |                        |                          |
+    |                        |                       TD |
+    |                        |<-------------------------|
+    |   +------------------\ |                          |
+    |   | satisfy PIT(TI), |-|                          |
+    |   | forward TD       | |                          |
+    |   +------------------+ |                          |
+    |                        |                          |
+    |                     TD |                          |
+    |<-----------------------|                          |
+    |                        | +--------------------\   |
+    |                        |-| remove             |   |
+    |                        | | RI-PIT(tentative)(RI)  |
+    |                        | | and TI-PIT(TI)     |   |
+    |                        | +--------------------+   |
+    |                        |                          |
+ 
+    Legend:
+    TI: Trigger Interest containing Reflexive Name Prefix TLV
+    RI: Reflexive Interest with Reflexive Name Prefix TLV
+    RNP: Reflexive Name Prefix
+    RD: Data message, answering RI
+    TD: Data message, answering TI
+	  ]]>
+-->
