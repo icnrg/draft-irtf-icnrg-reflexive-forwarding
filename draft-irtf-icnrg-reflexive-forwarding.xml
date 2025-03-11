@@ -80,7 +80,7 @@
       </address>
     </author>
 
-<!--    <date month="March" year="2020" /> -->
+<!--     <date month="March" year="2020" /> -->
 
     <!-- Meta-data Declarations -->
     <workgroup>ICNRG</workgroup>
@@ -698,7 +698,9 @@ RI_3: ccnx:/RNP=RNP1/Chunk=2  EndChunkNumber=2
 	</section>
       
 	<section anchor="forwarder-operation"><name>Forwarder Operation</name>
-    <t>The forwarder performs the following operations.</t>  
+
+	<!-- Most of this (except CS considerations) was already described in bullets of 4.2.  Need to ensure that they are consistent. I made changes to try to make them more consistent - I think Step 3 is suppoesed to be about the "Tentative" PIT entry. -->
+	<t>The forwarder performs the following operations.</t>  
 	<ol>
 	<li>
 	<t>Upon receiving an Interest containing a Reflexive Name Segment as its highest-order name segment, the Interest is interpreted as a Reflexive Interest. A forwarder MAY check its CS for a matching Data Object. If a match is found, the corresponding Data is returned and the Reflexive Interest is considered satisfied. If no match is found, proceed with the following steps.</t>
@@ -708,15 +710,14 @@ RI_3: ccnx:/RNP=RNP1/Chunk=2  EndChunkNumber=2
 
 	<t><strong>Note:</strong> Given that reflexive interests initiate exchanges constrained by the Interest Lifetime of the enclosing Trigger Interest/Data exchange, the value of caching the Reflexive Data responses in forwarders is for short-term recovery from lost packets as opposed to optimizing longer term caching gain. For this reason we avoid mandating or strongly recommending the CS check for reflexive interests.</t>
 	</li>
-
+<!-- Think this is covered by the steps below.
 	<li>
-	The forwarder then MUST record the RNP as an element of the PIT entry for that Interest. (For interactions with	Interest aggregation, also see <xref target="interest-aggregation"/>).
+	The forwarder then MUST record the RNP as an element of the PIT entry for that Interest.
 	</li>
+	-->
 
 	<li>
-	The forwarder MUST check that the high-order Name segment of the Interest is of
-	type Reflexive Name Segment. If not, while this could strictly speaking be
-	considered an error, the forwarder SHOULD simply process the Interest as a normal
+	The forwarder MUST check for the existence of a matching Tentative PIT entry (i.e., one containing the RNP in this Interest's Name). If no matching Tentative PIT entry is found, it could, strictly speaking, be considered an error, but the forwarder SHOULD simply process the Interest as a normal
 	non-reflexive Interest and skip the steps below. A match
 	indicates that this is a Reflexive Interest corresponding to
 	the original Trigger Interest, so execute the following steps.
@@ -724,7 +725,7 @@ RI_3: ccnx:/RNP=RNP1/Chunk=2  EndChunkNumber=2
 	  	
 	<li>
 	Create a new PIT entry for the Reflexive Interest (if
-	resources are sufficient). In the case of <xref target="Cefore"/> this is accomplished by cloning the new PIT entry from the tentative PIT entry created  earlier by receipt of the Trigger Interest.	
+	resources are sufficient). In the case of <xref target="Cefore"/> this is accomplished by cloning the new PIT entry from the tentative PIT entry created  earlier by receipt of the Trigger Interest.	 (For interactions with	Interest aggregation, also see <xref target="interest-aggregation"/>)
 <!--	Also, regarding NDN, see <xref target="PIT-sharding"/> for how PIT shard interacts with
 	the location and creation of PIT entries on high-speed forwarders. -->
 	</li>
