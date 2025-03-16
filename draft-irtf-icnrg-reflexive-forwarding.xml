@@ -281,11 +281,6 @@
       is needed, such as that proposed in <xref
       target="Zhang2018">KITE</xref> or <xref
       target="Auge2018">MAPME</xref>.
-<!--
-      <em>Note: I could not get the
-      mapme internet draft reference to resolve, so I am using the
-      IEEE paper instead for now.</em>
--->
     </li>
 
     <li anchor="reflection-attack">
@@ -324,7 +319,9 @@
 	 <t>For general ICN-related terms, we adopt the terms defined in <xref target="RFC8793"/>. For CCNx-specific terms, we use the terms defined in <xref target="RFC8569"/> and <xref target="RFC8609"/>. This specification defines the following additional terms:</t>
 	 <dl>
 	 	<dt><strong>Reflexive Interest</strong> (RI)</dt><dd>An interest message sent from a producer back towards a consumer to fetch data needed to satisfy the original interest.</dd>
+	 	<dt><strong>Reflexive Data</strong> (RD)</dt><dd>a Data message rteurned to a producer in response to a Reflexive Interest sent from the producer to the consumer</dd>
 		<dt><strong>Trigger Interest</strong> (TI)</dt><dd>An interest message sent from a consumer to a producer to potentially trigger one or more Reflexive Interests sent by the producer back to the consumer.</dd>
+		<dt><strong>Trigger Data</strong> (TD)</dt><dd>The data message returned by the producer in response to a Trigger Interest sent by the consumer, which completes a possibly multi-message Reflexive Forwarding exchange</dd>
 	 	<dt><strong>Reflexive Name Segment</strong></dt><dd>A typed name segment which, when present as the initial (highest-order) name segment identifies an Interest as being a Reflexive Interest instead of a normal Interest.</dd>
 	 	<dt><strong>Reflexive Name Prefix (RNP)</strong></dt><dd>A value carried in an Interest message to indicate to a producer that it may fetch data from the sending consumer by issuing one or more corresponding Reflexive Interests. It consists of a Name prefix whose high-order (i.e. first) name segment is a Reflexive Name Segment as defined above. It acts as a nonce, distinguishing Reflexive Interests related to a specific Trigger Interest from others in the same space-time vicinity of the network.</dd>
 	 </dl>
@@ -486,7 +483,7 @@
 	 
 	<section anchor="generic_spec"><name>Generic Forwarder Design</name>
 	 
-	<t>The following describes the operation of a CCNx or NDN forwarder enhanced to accommodate reflexive forwarding via Trigger Interests, Reflexive Interests, and Reflexive Data messages. This description likely adequate for most implementation approaches. However, there are possible performance bottlenecks for reflexive forwarding that employ highly parallel forwarding schemes using multi-core server systems. Such systems may use <em>PIT Sharding</em> across cores, and therefore benefit from additional optional protocol enhancements, such as the "PIT Token" protocol elements pioneered in <xref target="Shi2020"/>. Alternatively, techniques such as those employed by the Cefore <xref target="Asaeda2019"></xref><xref target="Cefore"></xref> forwarder from NICT may be employed.</t>
+	<t>The following describes the operation of a CCNx or NDN forwarder enhanced to accommodate reflexive forwarding via Trigger Interests, Reflexive Interests, Reflexive Data and Trigger Data messages. This description likely adequate for most implementation approaches. However, there are possible performance bottlenecks for reflexive forwarding that employ highly parallel forwarding schemes using multi-core server systems. Such systems may use <em>PIT Sharding</em> across cores, and therefore benefit from additional optional protocol enhancements, such as the "PIT Token" protocol elements pioneered in <xref target="Shi2020"/>. Alternatively, techniques such as those employed by the Cefore <xref target="Asaeda2019"></xref><xref target="Cefore"></xref> forwarder from NICT may be employed.</t>
 
 	<!--
 	<t>The overall interaction flow for reflexive forwarding is illustrated below in <xref target="overall-message-flow"/>.</t>
@@ -510,31 +507,32 @@
 	<section anchor="CCNx_spec">
 	<name>Interaction Flow for Reflexive Forwarding: An Example</name>
 
-	<t>Based on the implementation approach in Cefore <xref target="Asaeda2019"></xref><xref target="Cefore"></xref>, an example of the overall interaction flow for reflexive forwarding for CCNx is presented below and illustrated in <xref target="overall-message-flow-ccnx"/>.</t>
+	<t>Based on the implementation approach in Cefore <xref target="Asaeda2019"></xref><xref target="Cefore"></xref>, an example of the overall interaction flow for reflexive forwarding for CCNx is presented below and illustrated in <xref target="overall-message-flow-ccnx"/>. Other implementation approaches are of course equally valid as long as the protocol semantics are maintained.</t>
 
 	<t>Forwarder operation for CCNx is enhanced in the following respects when supporting Reflexive Interests.</t>
 	<ul>
-		<li>When a forwarder receives a Trigger Interest (TI) that will be sent toward the producer, in addition to the normal PIT entry created on receipt of a new Interest message, the forwarder creates a <em>tentative</em> PIT entry for the possible later receipt of a Reflexive Interest</li>
-		<li> This tentative PIT entry has the Reflexive Name Prefix from the Trigger Interest as its Name field, and the incoming face list of the trigger interest as the potential output face(s) for any subsequent Reflexive Interest received.</li>
-		<li>On receipt of a Reflexive Interest matching the Reflexive Name Prefix of a tentative PIT entry, a full PIT entry is created from the tentative entry and normal PIT processing ensues (e.g. also including recording the incoming face(s) of the Reflexive Interest).</li>
+		<li>When a forwarder receives a Trigger Interest (TI) that will be sent toward the producer, in addition to the normal PIT entry created on receipt of a new Interest message, the forwarder creates a <em>"template"</em> PIT entry (t-PIT) for the possible later receipt of a Reflexive Interest</li>
+		<li> This template PIT entry has the Reflexive Name Prefix from the Trigger Interest as its Name field, and the incoming face list of the trigger interest as the potential output face(s) for any subsequent Reflexive Interest received.</li>
+		<li>On receipt of a Reflexive Interest matching the Reflexive Name Prefix of a template PIT entry, a full PIT entry is created from the template entry and normal PIT processing ensues (e.g. also including recording the incoming face(s) of the Reflexive Interest).</li>
 		<li>The Reflexive Interest is forwarded over the recorded outgoing face(s) from the PIT as opposed to examining the FIB to find an appropriate next hop for that Reflexive Interest.</li>
-		<!--the name of the Name TLV in TI, downstream face (i.e., face from which the TI is received), and upstream face(s) (i.e., face(s) from which the TI is/are forwarded), and (2) a tentative PIT entry for a Reflexive Interest (RI) (RI-PIT(dummy), hereafter) that includes Reflexive Name Prefix (RNP), downstream face (i.e., face(s) from which the TI is/are forwarded), and upstream face (i.e., face from which the TI is received). RI-PIT(dummy) is created whenever TI is received. However, RI-PIT(dummy) is not used for packet forwarding; it is only referred to create the actual PIT entry for RI (RI-PIT, hereafter). When a forwarder receives RI, it creates RI-PIT by copying the downstream and upstream faces from the RI-PIT(dummy) with the same RNP.</t> -->
+		<!--the name of the Name TLV in TI, downstream face (i.e., face from which the TI is received), and upstream face(s) (i.e., face(s) from which the TI is/are forwarded), and (2) a tentaive PIT entry for a Reflexive Interest (RI) (RI-PIT(dummy), hereafter) that includes Reflexive Name Prefix (RNP), downstream face (i.e., face(s) from which the TI is/are forwarded), and upstream face (i.e., face from which the TI is received). RI-PIT(dummy) is created whenever TI is received. However, RI-PIT(dummy) is not used for packet forwarding; it is only referred to create the actual PIT entry for RI (RI-PIT, hereafter). When a forwarder receives RI, it creates RI-PIT by copying the downstream and upstream faces from the RI-PIT(dummy) with the same RNP.</t> -->
 	</ul>
 	
 	<figure anchor="overall-message-flow-ccnx">
 	<name>Overview of Reflexive Forwarding in CCNx</name>
-	<artwork type="ascii-art" src="messsage-flow-generic-ccnx.txt"/>
+	<artwork type="ascii-art" src="message-flow-generic-ccnx.txt"/>
 	<artwork type="ascii-art">
     Legend:
     TI: Trigger Interest containing Reflexive Name Prefix
     RI: Reflexive Interest with Reflexive Name Prefix
     RNP: Reflexive Name Prefix
+    t-PIT: A template PIT entry created from the TI PIT entry
     RD: Data message, answering RI
     TD: Data message, answering TI
 	  </artwork>
 	</figure>
 
-	<t>There are a number of reasons to maintain both a tentative RI-PIT and (possibly) multiple RI-PIT entries for reflexive forwarding. Among them are:</t>
+	<t>There are a number of reasons to maintain both a template RI-PIT and (possibly) multiple RI-PIT entries for reflexive forwarding. Among them are:</t>
 	<ul>
 	<li>There may be <xref target="I-D.irtf-icnrg-ccnxchunking">multiple chunks</xref>  requested using a sequence of Reflexive Interests.</li>
 	<li>Multiple Reflexive Interests may be issued by the producer to fetch arguments in the remote invocation use case described in  <xref target="RMI"/>.</li>
@@ -652,7 +650,7 @@ RI_3: ccnx:/RNP=RNP1/Chunk=2  EndChunkNumber=2
 	]]></artwork>
     </figure>
 	
-	<t>The RI-PIT entry MAY include a chunk number to the RNP, while a tentative RI-PIT entry does not. Like an ordinary PIT entry, RI-PIT is erased whenever the corresponding RD is forwarded through the downstream face, while a tentative RI-PIT entry is erased when the TI-PIT lifetime expires or Trigger Data (TD) is received and forwarded at the forwarder.</t>
+	<t>The RI-PIT entry MAY include a chunk number to the RNP, while a template RI-PIT entry does not. Like an ordinary PIT entry, RI-PIT is erased whenever the corresponding RD is forwarded through the downstream face, while a template RI-PIT entry is erased when the TI-PIT lifetime expires or Trigger Data (TD) is received and forwarded at the forwarder.</t>
 
 		<aside><t><strong>Note: </strong>The above likely needs some adjustment when we sort out the general handling on chunking for both regular and reflexive interests. Stay tuned.</t></aside>
 		
@@ -699,7 +697,7 @@ RI_3: ccnx:/RNP=RNP1/Chunk=2  EndChunkNumber=2
       
 	<section anchor="forwarder-operation"><name>Forwarder Operation</name>
 
-	<!-- Most of this (except CS considerations) was already described in bullets of 4.2.  Need to ensure that they are consistent. I made changes to try to make them more consistent - I think Step 3 is suppoesed to be about the "Tentative" PIT entry. -->
+	<!-- Most of this (except CS considerations) was already described in bullets of 4.2.  Need to ensure that they are consistent. I made changes to try to make them more consistent - I think Step 3 is suppoesed to be about the "template" PIT entry. -->
 	<t>The forwarder performs the following operations.</t>  
 	<ol>
 	<li>
@@ -717,7 +715,7 @@ RI_3: ccnx:/RNP=RNP1/Chunk=2  EndChunkNumber=2
 	-->
 
 	<li>
-	The forwarder MUST check for the existence of a matching Tentative PIT entry (i.e., one containing the RNP in this Interest's Name). If no matching Tentative PIT entry is found, it could, strictly speaking, be considered an error, but the forwarder SHOULD simply process the Interest as a normal
+	The forwarder MUST check for the existence of a matching template PIT entry (i.e., one containing the RNP in this Interest's Name). If no matching template PIT entry is found, it could, strictly speaking, be considered an error, but the forwarder SHOULD simply process the Interest as a normal
 	non-reflexive Interest and skip the steps below. A match
 	indicates that this is a Reflexive Interest corresponding to
 	the original Trigger Interest, so execute the following steps.
@@ -725,7 +723,7 @@ RI_3: ccnx:/RNP=RNP1/Chunk=2  EndChunkNumber=2
 	  	
 	<li>
 	Create a new PIT entry for the Reflexive Interest (if
-	resources are sufficient). In the case of <xref target="Cefore"/> this is accomplished by cloning the new PIT entry from the tentative PIT entry created  earlier by receipt of the Trigger Interest.	 (For interactions with	Interest aggregation, also see <xref target="interest-aggregation"/>)
+	resources are sufficient). In the case of <xref target="Cefore"/> this is accomplished by cloning the new PIT entry from the template PIT entry created  earlier by receipt of the Trigger Interest.	 (For interactions with	Interest aggregation, also see <xref target="interest-aggregation"/>)
 <!--	Also, regarding NDN, see <xref target="PIT-sharding"/> for how PIT shard interacts with
 	the location and creation of PIT entries on high-speed forwarders. -->
 	</li>
@@ -760,7 +758,7 @@ RI_3: ccnx:/RNP=RNP1/Chunk=2  EndChunkNumber=2
 	<section><name>Processing of a Trigger Interest containing a Reflexive Name Prefix</name>
 		<sourcecode type="pseudocode">
 Create PIT entry for Interest;
-Optionally create a tentative PIT entry for any potential Reflexive Interests 
+Optionally create a template PIT entry for any potential Reflexive Interests 
      expected to match the RNP in the Trigger Interest;
 Forward Interest upstream;
 			</sourcecode>
@@ -775,7 +773,7 @@ IF PIT entry of original Interest not is found
          back to the producer;
 ELSE
     Create PIT entry for Reflexive Interest 
-    (or optionally clone it from the tentative TI PIT entry that was created together 
+    (or optionally clone it from the template PIT entry that was created together 
      with the Trigger Interest PIT entry);
     Process as a normal Interest;
 RETURN

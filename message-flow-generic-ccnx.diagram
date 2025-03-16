@@ -2,10 +2,10 @@ object Consumer Forwarder Producer
 Consumer->Forwarder: TI
 note left of Forwarder: Record fullname\nin PIT(TI)
 Forwarder->Producer: TI1
-note right of Forwarder: Create tentative\n PIT(RI) from PIT(TI)
+note right of Forwarder: Create t-PIT(RI)\nfrom PIT(TI)
 note right of Producer: Check\nprefix,\ncreating\nReflexive\nInterest\nstate
 Producer->Forwarder: RI
-note right of Forwarder: match tentative PIT(RI)\ncreate PIT(RI),\nforward RI
+note right of Forwarder: match t-PIT(RI)\ncreate PIT(RI),\nforward RI
 Forwarder->Consumer: RI
 Consumer->Forwarder: RD obj
 note right of Forwarder: satisfy PIT(RI),\nforward RD via\n PIT(RI) 
@@ -14,5 +14,5 @@ note right of Producer: all\n parameters\nreceived,\nanswer TI
 Producer->Forwarder: TD object
 note right of Forwarder: satisfy PIT(TI),\nforward TD
 Forwarder->Consumer: TD
-note left of Forwarder: remove PIT(TI) and\n tentative PIT(RI)
+note left of Forwarder: remove PIT(TI) and\n t-PIT(RI)
 
